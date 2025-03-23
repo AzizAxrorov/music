@@ -809,7 +809,7 @@
         const playBtn = document.querySelector('.play-btn');
         const prevBtn = document.querySelector('.prev-btn');
         const nextBtn = document.querySelector('.next-btn');
-    
+
         let songs = [];
         let currentSongIndex = -1;
         let isListening = false;
@@ -818,12 +818,12 @@
         let currentPlayer = null;
         let countdownInterval;
         let isWaiting = false;
-    
+
         // Brauzer yangilanmasligi uchun
         window.onbeforeunload = function() {
             return "Saytni yopmoqchimisiz? Oynatilayotgan media to'xtatiladi.";
         };
-    
+
         // Real vaqt rejimida soatni yangilash
         function updateClock() {
             const now = new Date();
@@ -834,7 +834,7 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
-    
+
         // Mikrofonni sozlash va doimiy tinglash
         async function setupMicrophone() {
             try {
@@ -845,7 +845,7 @@
                         autoGainControl: true
                     }
                 });
-    
+
                 const audioContextMic = new (window.AudioContext || window.webkitAudioContext)();
                 const source = audioContextMic.createMediaStreamSource(stream);
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -853,14 +853,14 @@
                 recognition.lang = 'uz-UZ';
                 recognition.continuous = true;
                 recognition.interimResults = true;
-    
+
                 recognition.onstart = () => {
                     isListening = true;
                     startBtn.classList.add('listening');
                     commandIndicator.classList.add('show');
                     statusDiv.textContent = "Tinglanmoqda...";
                 };
-    
+
                 recognition.onend = () => {
                     isListening = false;
                     startBtn.classList.remove('listening');
@@ -868,18 +868,18 @@
                     statusDiv.textContent = "Buyruq kutilmoqda...";
                     if (!isListening) recognition.start();
                 };
-    
+
                 recognition.onresult = (event) => {
                     const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
                     statusDiv.textContent = `Eshitildi: ${transcript}`;
-    
+
                     // "Aziza" so‘zini qidirish
                     if (transcript.includes('aziza') && !isWaiting) {
                         isWaiting = true;
                         statusDiv.textContent = `"Aziza" aniqlandi: Нима буйурасиз?`;
                         statusDiv.classList.add('success');
                         setTimeout(() => statusDiv.classList.remove('success'), 2000);
-    
+
                         // Media 15 soniyaga to‘xtaydi
                         if (currentPlayer && !currentPlayer.paused) {
                             currentPlayer.pause();
@@ -890,7 +890,7 @@
                             `;
                             stopVisualizer();
                         }
-    
+
                         // 15 soniyadan sanash
                         let countdown = 15;
                         statusDiv.textContent = `Aziza ${countdown}`;
@@ -912,7 +912,7 @@
                                 }
                             }
                         }, 1000);
-    
+
                         // 15 soniya kutish
                         setTimeout(() => {
                             clearInterval(countdownInterval);
@@ -923,14 +923,14 @@
                     else if (isWaiting) {
                         const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
                         let foundCommand = null;
-    
+
                         for (const cmd of validCommands) {
                             if (transcript.includes(cmd)) {
                                 foundCommand = cmd;
                                 break;
                             }
                         }
-    
+
                         if (foundCommand) {
                             clearInterval(countdownInterval);
                             isWaiting = false;
@@ -938,7 +938,7 @@
                         }
                     }
                 };
-    
+
                 recognition.onerror = (event) => {
                     if (event.error !== 'no-speech') {
                         statusDiv.textContent = "Xato: Ovoz aniqlanmadi";
@@ -947,17 +947,17 @@
                     }
                     if (isListening) recognition.start();
                 };
-    
+
                 recognition.start();
             } catch (err) {
                 console.error("Mikrofon sozlamasida xato:", err);
                 statusDiv.textContent = "Mikrofon ishga tushmadi";
             }
         }
-    
+
         // Mikrofonni dastlabki ishga tushirish
         setupMicrophone();
-    
+
         // Mikrofon tugmasi bilan tinglashni boshqarish
         startBtn.addEventListener('click', () => {
             if (isListening) {
@@ -966,7 +966,7 @@
                 recognition.start();
             }
         });
-    
+
         // Fayl yuklash
         fileInput.addEventListener('change', (event) => {
             const files = Array.from(event.target.files);
@@ -980,18 +980,18 @@
                 songs.push(song);
                 addSongToPlaylist(song, songs.length - 1);
             });
-    
+
             if (songs.length > 0 && currentSongIndex === -1) {
                 currentSongIndex = 0;
                 playSong(currentSongIndex);
             }
         });
-    
+
         // Pleylistga qo'shiq qo'shish
         function addSongToPlaylist(song, index) {
             const playlistEmpty = document.querySelector('.empty-playlist');
             if (playlistEmpty) playlistEmpty.remove();
-    
+
             const songItem = document.createElement('div');
             songItem.classList.add('song-item');
             songItem.setAttribute('data-index', index);
@@ -1014,12 +1014,12 @@
                     </button>
                 </div>
             `;
-    
+
             songItem.querySelector('.play-btn').addEventListener('click', () => {
                 currentSongIndex = index;
                 playSong(currentSongIndex);
             });
-    
+
             songItem.querySelector('.remove-btn').addEventListener('click', () => {
                 songs.splice(index, 1);
                 renderPlaylist();
@@ -1040,10 +1040,10 @@
                     }
                 }
             });
-    
+
             playlist.appendChild(songItem);
         }
-    
+
         // Pleylistni qayta render qilish
         function renderPlaylist() {
             playlist.innerHTML = '';
@@ -1067,17 +1067,17 @@
                 });
             }
         }
-    
+
         // Faylni ijro etish
         function playSong(index) {
             if (index < 0 || index >= songs.length) return;
-    
+
             const song = songs[index];
             if (currentPlayer) {
                 currentPlayer.pause();
                 currentPlayer.style.display = 'none';
             }
-    
+
             if (song.type === 'video') {
                 currentPlayer = mediaPlayer;
                 mediaPlayer.style.display = 'block';
@@ -1087,7 +1087,7 @@
                 audioPlayer.style.display = 'block';
                 mediaPlayer.style.display = 'none';
             }
-    
+
             currentPlayer.src = song.url;
             currentPlayer.play();
             nowPlayingTitle.textContent = song.name;
@@ -1102,14 +1102,14 @@
                 </svg>
             `;
         }
-    
+
         // Aktiv qo'shiqni yangilash
         function updateActiveSong(index) {
             const songItems = document.querySelectorAll('.song-item');
             songItems.forEach(item => item.classList.remove('active'));
             if (songItems[index]) songItems[index].classList.add('active');
         }
-    
+
         // Davomiylikni yangilash
         function updateDuration() {
             if (!currentPlayer) return;
@@ -1127,7 +1127,7 @@
                 progress.style.setProperty('--progress', `${progressPercent}%`);
             });
         }
-    
+
         // Progress bar bilan vaqtni boshqarish
         progress.addEventListener('input', () => {
             if (!currentPlayer) return;
@@ -1135,7 +1135,7 @@
             const newTime = (progress.value / 100) * dur;
             currentPlayer.currentTime = newTime;
         });
-    
+
         // Real audio vizualizatori
         function setupVisualizer() {
             if (!currentPlayer || currentPlayer === mediaPlayer) return;
@@ -1144,30 +1144,30 @@
                 analyser = audioContext.createAnalyser();
                 analyser.fftSize = 32;
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
-    
+
                 const source = audioContext.createMediaElementSource(currentPlayer);
                 source.connect(analyser);
                 analyser.connect(audioContext.destination);
             }
-    
+
             function animateVisualizer() {
                 if (currentPlayer.paused) {
                     visualizerBars.forEach(bar => bar.style.height = '10px');
                     return;
                 }
-    
+
                 analyser.getByteFrequencyData(dataArray);
                 visualizerBars.forEach((bar, i) => {
                     const height = (dataArray[i] / 255) * 60;
                     bar.style.height = `${height}px`;
                 });
-    
+
                 requestAnimationFrame(animateVisualizer);
             }
-    
+
             animateVisualizer();
         }
-    
+
         // Vizualizatorni to'xtatish
         function stopVisualizer() {
             if (audioContext) {
@@ -1175,28 +1175,28 @@
                 playerBackdrop.classList.remove('active');
             }
         }
-    
+
         // Ovozli buyruqlarni qayta ishlash
         function processCommand(transcript) {
             const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
             let foundCommand = null;
-    
+
             for (const cmd of validCommands) {
                 if (transcript.includes(cmd)) {
                     foundCommand = cmd;
                     break;
                 }
             }
-    
+
             if (!foundCommand) {
                 statusDiv.textContent = "Buyruq topilmadi";
                 return;
             }
-    
+
             statusDiv.textContent = `Buyruq bajarildi: ${foundCommand}`;
             statusDiv.classList.add('success');
             setTimeout(() => statusDiv.classList.remove('success'), 2000);
-    
+
             switch (foundCommand) {
                 case 'yon':
                     if (songs.length > 0) {
@@ -1274,7 +1274,7 @@
                     break;
             }
         }
-    
+
         // Play/Pause tugmasi
         playBtn.addEventListener('click', () => {
             if (currentPlayer && currentPlayer.paused && songs.length > 0) {
@@ -1295,7 +1295,7 @@
                 stopVisualizer();
             }
         });
-    
+
         // Oldinga va orqaga tugmalari
         nextBtn.addEventListener('click', () => {
             if (songs.length > 0) {
@@ -1303,14 +1303,14 @@
                 playSong(currentSongIndex);
             }
         });
-    
+
         prevBtn.addEventListener('click', () => {
             if (songs.length > 0) {
                 currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
                 playSong(currentSongIndex);
             }
         });
-    
+
         // Media player tugashida keyingi faylni avtomatik ijro etish
         mediaPlayer.addEventListener('ended', () => {
             if (songs.length > 0) {
@@ -1320,7 +1320,7 @@
                 stopVisualizer();
             }
         });
-    
+
         audioPlayer.addEventListener('ended', () => {
             if (songs.length > 0) {
                 currentSongIndex = (currentSongIndex + 1) % songs.length;
@@ -1329,10 +1329,10 @@
                 stopVisualizer();
             }
         });
-    
+
         // Media player pauza holatida vizualizatorni to'xtatish
         mediaPlayer.addEventListener('pause', stopVisualizer);
         audioPlayer.addEventListener('pause', stopVisualizer);
-    </script>
+    </script> 
 </body>
 </html>
