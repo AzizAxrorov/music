@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ovozli Qo'shiq Boshqaruvi</title>
+    <title>Ovozli Qo'shiq va Video Boshqaruvi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Oldingi stillar o'zgarishsiz qoldirildi */
         :root {
             --primary-color: #ffcc00;
             --dark-color: #222222;
@@ -250,7 +251,7 @@
             background-color: #222;
             margin-bottom: 15px;
             position: relative;
-            display: none; /* Ovozli boshqaruv uchun yashiriladi */
+            display: block; /* Video va audio ko'rsatish uchun */
         }
         
         #media-player {
@@ -565,7 +566,7 @@
                     <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z"/>
                     <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z"/>
                 </svg>
-                Ovozli Musiqa
+                Ovozli Musiqa va Video
             </div>
             <div class="controls">
                 <button id="start-btn" class="mic-btn" title="Ovoz tinglovchini yoqish/o'chirish">
@@ -606,7 +607,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="upload-container">
-                            <input type="file" id="file-input" class="file-input" accept="audio/*,video/*" multiple>
+                            <input type="file" id="file-input" class="file-input" accept="audio/*,video/*" multiple webkitdirectory>
                             <div class="upload-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -614,7 +615,7 @@
                                 </svg>
                             </div>
                             <p class="upload-text">MP3 yoki MP4 fayllarni yuklash uchun bosing yoki sudrab tashlang</p>
-                            <label for="file-input" class="upload-btn">Qo'shiqlar yuklash</label>
+                            <label for="file-input" class="upload-btn">Fayllarni yuklash</label>
                         </div>
                         
                         <div class="playlist-container">
@@ -627,8 +628,8 @@
                                             <path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/>
                                         </svg>
                                     </div>
-                                    <p>Hozircha qo'shiqlar yo'q</p>
-                                    <p>Qo'shiqlarni yuklash uchun yuqoridagi tugmani bosing</p>
+                                    <p>Hozircha fayllar yo'q</p>
+                                    <p>Fayllarni yuklash uchun yuqoridagi tugmani bosing</p>
                                 </div>
                             </div>
                         </div>
@@ -650,11 +651,11 @@
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz yon"</span>
-                                <span>Qo'shiqni ijro etishni boshlaydi</span>
+                                <span>Media ijro etishni boshlaydi</span>
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz to'xta"</span>
-                                <span>Qo'shiqni to'xtatadi</span>
+                                <span>Media to'xtatadi</span>
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz davom et"</span>
@@ -662,19 +663,27 @@
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz keyingi"</span>
-                                <span>Keyingi qo'shiqqa o'tadi</span>
+                                <span>Keyingi faylga o'tadi</span>
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz avvalgi"</span>
-                                <span>Avvalgi qo'shiqqa qaytadi</span>
+                                <span>Avvalgi faylga qaytadi</span>
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz tamom"</span>
-                                <span>Qo'shiqni to'xtatib boshiga qaytaradi</span>
+                                <span>Media to'xtatib boshiga qaytaradi</span>
                             </div>
                             <div class="command-item">
                                 <span class="command-keyword">"Aziz o'ch"</span>
                                 <span>Mikrofonni o'chiradi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz pasaytir"</span>
+                                <span>Ovozni 10% pasaytiradi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz ko'tar"</span>
+                                <span>Ovozni 10% ko'taradi</span>
                             </div>
                         </div>
                     </div>
@@ -697,7 +706,8 @@
                     
                     <div class="player-visual">
                         <div class="media-player-wrapper">
-                            <audio id="media-player" controls></audio>
+                            <video id="media-player" controls style="display: none;"></video>
+                            <audio id="audio-player" controls style="display: none;"></audio>
                         </div>
                         
                         <div id="visualizer" class="visualizer">
@@ -779,7 +789,6 @@
             </div>
         </div>
     </div>
-
     <script>
         // Elementlarni tanlash
         const startBtn = document.getElementById('start-btn');
@@ -788,6 +797,7 @@
         const fileInput = document.getElementById('file-input');
         const playlist = document.getElementById('playlist');
         const mediaPlayer = document.getElementById('media-player');
+        const audioPlayer = document.getElementById('audio-player');
         const nowPlayingTitle = document.querySelector('.now-playing-title');
         const nowPlayingArtist = document.querySelector('.now-playing-artist');
         const currentTime = document.getElementById('current-time');
@@ -799,14 +809,21 @@
         const playBtn = document.querySelector('.play-btn');
         const prevBtn = document.querySelector('.prev-btn');
         const nextBtn = document.querySelector('.next-btn');
-
+    
         let songs = [];
         let currentSongIndex = -1;
         let isListening = false;
         let recognition;
         let audioContext, analyser, dataArray;
-        let commandTimeout, silenceTimeout;
-
+        let currentPlayer = null;
+        let countdownInterval;
+        let isWaiting = false;
+    
+        // Brauzer yangilanmasligi uchun
+        window.onbeforeunload = function() {
+            return "Saytni yopmoqchimisiz? Oynatilayotgan media to'xtatiladi.";
+        };
+    
         // Real vaqt rejimida soatni yangilash
         function updateClock() {
             const now = new Date();
@@ -817,57 +834,130 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
-
-        // Speech Recognition sozlamalari
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'uz-UZ';
-            recognition.continuous = true;
-            recognition.interimResults = false;
-
-            recognition.onstart = () => {
-                isListening = true;
-                startBtn.classList.add('listening');
-                commandIndicator.classList.add('show');
-                statusDiv.textContent = "Tinglanmoqda...";
-            };
-
-            recognition.onend = () => {
-                isListening = false;
-                startBtn.classList.remove('listening');
-                commandIndicator.classList.remove('show');
-                statusDiv.textContent = "Buyruq kutilmoqda...";
-                clearTimeout(commandTimeout);
-                clearTimeout(silenceTimeout);
-            };
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
-                if (transcript.length < 3) return;
-
-                statusDiv.textContent = `Tanildi: ${transcript}`;
-                statusDiv.classList.add('success');
-                setTimeout(() => statusDiv.classList.remove('success'), 2000);
-
-                processCommand(transcript);
-            };
-
-            recognition.onerror = (event) => {
-                if (event.error !== 'no-speech') {
-                    statusDiv.textContent = "Xato: Ovoz aniqlanmadi";
-                    statusDiv.classList.add('error');
-                    setTimeout(() => statusDiv.classList.remove('error'), 2000);
-                }
+    
+        // Mikrofonni sozlash va doimiy tinglash
+        async function setupMicrophone() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+    
+                const audioContextMic = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContextMic.createMediaStreamSource(stream);
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'uz-UZ';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+    
+                recognition.onstart = () => {
+                    isListening = true;
+                    startBtn.classList.add('listening');
+                    commandIndicator.classList.add('show');
+                    statusDiv.textContent = "Tinglanmoqda...";
+                };
+    
+                recognition.onend = () => {
+                    isListening = false;
+                    startBtn.classList.remove('listening');
+                    commandIndicator.classList.remove('show');
+                    statusDiv.textContent = "Buyruq kutilmoqda...";
+                    if (!isListening) recognition.start();
+                };
+    
+                recognition.onresult = (event) => {
+                    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+                    statusDiv.textContent = `Eshitildi: ${transcript}`;
+    
+                    // "Aziza" so‘zini qidirish
+                    if (transcript.includes('aziza') && !isWaiting) {
+                        isWaiting = true;
+                        statusDiv.textContent = `"Aziza" aniqlandi: Нима буйурасиз?`;
+                        statusDiv.classList.add('success');
+                        setTimeout(() => statusDiv.classList.remove('success'), 2000);
+    
+                        // Media 15 soniyaga to‘xtaydi
+                        if (currentPlayer && !currentPlayer.paused) {
+                            currentPlayer.pause();
+                            playBtn.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3 4v8l7-4-7-4z"/>
+                                </svg>
+                            `;
+                            stopVisualizer();
+                        }
+    
+                        // 15 soniyadan sanash
+                        let countdown = 15;
+                        statusDiv.textContent = `Aziza ${countdown}`;
+                        clearInterval(countdownInterval);
+                        countdownInterval = setInterval(() => {
+                            countdown--;
+                            statusDiv.textContent = `Aziza ${countdown}`;
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                isWaiting = false;
+                                if (currentPlayer && currentPlayer.paused) {
+                                    currentPlayer.play();
+                                    playBtn.innerHTML = `
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
+                                        </svg>
+                                    `;
+                                    setupVisualizer();
+                                }
+                            }
+                        }, 1000);
+    
+                        // 15 soniya kutish
+                        setTimeout(() => {
+                            clearInterval(countdownInterval);
+                            isWaiting = false;
+                        }, 15000);
+                    } 
+                    // 15 soniya ichida buyruq kelsa
+                    else if (isWaiting) {
+                        const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
+                        let foundCommand = null;
+    
+                        for (const cmd of validCommands) {
+                            if (transcript.includes(cmd)) {
+                                foundCommand = cmd;
+                                break;
+                            }
+                        }
+    
+                        if (foundCommand) {
+                            clearInterval(countdownInterval);
+                            isWaiting = false;
+                            processCommand(transcript);
+                        }
+                    }
+                };
+    
+                recognition.onerror = (event) => {
+                    if (event.error !== 'no-speech') {
+                        statusDiv.textContent = "Xato: Ovoz aniqlanmadi";
+                        statusDiv.classList.add('error');
+                        setTimeout(() => statusDiv.classList.remove('error'), 2000);
+                    }
+                    if (isListening) recognition.start();
+                };
+    
                 recognition.start();
-            };
-
-            recognition.start();
-        } else {
-            statusDiv.textContent = "Ovozli buyruqlar qo'llab-quvvatlanmaydi";
-            startBtn.disabled = true;
+            } catch (err) {
+                console.error("Mikrofon sozlamasida xato:", err);
+                statusDiv.textContent = "Mikrofon ishga tushmadi";
+            }
         }
-
+    
+        // Mikrofonni dastlabki ishga tushirish
+        setupMicrophone();
+    
         // Mikrofon tugmasi bilan tinglashni boshqarish
         startBtn.addEventListener('click', () => {
             if (isListening) {
@@ -876,7 +966,7 @@
                 recognition.start();
             }
         });
-
+    
         // Fayl yuklash
         fileInput.addEventListener('change', (event) => {
             const files = Array.from(event.target.files);
@@ -884,30 +974,31 @@
                 const song = {
                     name: file.name.replace(/\.[^/.]+$/, ""),
                     url: URL.createObjectURL(file),
-                    file: file
+                    file: file,
+                    type: file.type.startsWith('video') ? 'video' : 'audio'
                 };
                 songs.push(song);
                 addSongToPlaylist(song, songs.length - 1);
             });
-
+    
             if (songs.length > 0 && currentSongIndex === -1) {
                 currentSongIndex = 0;
                 playSong(currentSongIndex);
             }
         });
-
+    
         // Pleylistga qo'shiq qo'shish
         function addSongToPlaylist(song, index) {
             const playlistEmpty = document.querySelector('.empty-playlist');
             if (playlistEmpty) playlistEmpty.remove();
-
+    
             const songItem = document.createElement('div');
             songItem.classList.add('song-item');
             songItem.setAttribute('data-index', index);
             songItem.innerHTML = `
                 <div class="song-number">${index + 1}</div>
                 <div class="song-info">
-                    <div class="song-title">${song.name}</div>
+                    <div class="song-title">${song.name} (${song.type})</div>
                 </div>
                 <div class="song-actions">
                     <button class="action-btn primary play-btn">
@@ -923,17 +1014,17 @@
                     </button>
                 </div>
             `;
-
+    
             songItem.querySelector('.play-btn').addEventListener('click', () => {
                 currentSongIndex = index;
                 playSong(currentSongIndex);
             });
-
+    
             songItem.querySelector('.remove-btn').addEventListener('click', () => {
                 songs.splice(index, 1);
                 renderPlaylist();
                 if (currentSongIndex === index) {
-                    mediaPlayer.pause();
+                    if (currentPlayer) currentPlayer.pause();
                     if (songs.length > 0) {
                         currentSongIndex = Math.min(currentSongIndex, songs.length - 1);
                         playSong(currentSongIndex);
@@ -949,10 +1040,10 @@
                     }
                 }
             });
-
+    
             playlist.appendChild(songItem);
         }
-
+    
         // Pleylistni qayta render qilish
         function renderPlaylist() {
             playlist.innerHTML = '';
@@ -966,8 +1057,8 @@
                                 <path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/>
                             </svg>
                         </div>
-                        <p>Hozircha qo'shiqlar yo'q</p>
-                        <p>Qo'shiqlarni yuklash uchun yuqoridagi tugmani bosing</p>
+                        <p>Hozircha fayllar yo'q</p>
+                        <p>Fayllarni yuklash uchun yuqoridagi tugmani bosing</p>
                     </div>
                 `;
             } else {
@@ -976,16 +1067,31 @@
                 });
             }
         }
-
-        // Qo'shiqni ijro etish
+    
+        // Faylni ijro etish
         function playSong(index) {
             if (index < 0 || index >= songs.length) return;
-
+    
             const song = songs[index];
-            mediaPlayer.src = song.url;
-            mediaPlayer.play();
+            if (currentPlayer) {
+                currentPlayer.pause();
+                currentPlayer.style.display = 'none';
+            }
+    
+            if (song.type === 'video') {
+                currentPlayer = mediaPlayer;
+                mediaPlayer.style.display = 'block';
+                audioPlayer.style.display = 'none';
+            } else {
+                currentPlayer = audioPlayer;
+                audioPlayer.style.display = 'block';
+                mediaPlayer.style.display = 'none';
+            }
+    
+            currentPlayer.src = song.url;
+            currentPlayer.play();
             nowPlayingTitle.textContent = song.name;
-            nowPlayingArtist.textContent = "Noma'lum"; // Ijrochi nomi fayldan olinmaydi, shuning uchun statik
+            nowPlayingArtist.textContent = song.type === 'video' ? "Video" : "Audio";
             updateDuration();
             updateActiveSong(index);
             playerBackdrop.classList.add('active');
@@ -996,19 +1102,20 @@
                 </svg>
             `;
         }
-
+    
         // Aktiv qo'shiqni yangilash
         function updateActiveSong(index) {
             const songItems = document.querySelectorAll('.song-item');
             songItems.forEach(item => item.classList.remove('active'));
             if (songItems[index]) songItems[index].classList.add('active');
         }
-
+    
         // Davomiylikni yangilash
         function updateDuration() {
-            mediaPlayer.addEventListener('timeupdate', () => {
-                const current = mediaPlayer.currentTime;
-                const dur = mediaPlayer.duration || 0;
+            if (!currentPlayer) return;
+            currentPlayer.addEventListener('timeupdate', () => {
+                const current = currentPlayer.currentTime;
+                const dur = currentPlayer.duration || 0;
                 const currentMinutes = Math.floor(current / 60);
                 const currentSeconds = Math.floor(current % 60);
                 const durationMinutes = Math.floor(dur / 60);
@@ -1020,45 +1127,47 @@
                 progress.style.setProperty('--progress', `${progressPercent}%`);
             });
         }
-
-        // Progress bar bilan qo‘shiq vaqtini boshqarish
+    
+        // Progress bar bilan vaqtni boshqarish
         progress.addEventListener('input', () => {
-            const dur = mediaPlayer.duration || 0;
+            if (!currentPlayer) return;
+            const dur = currentPlayer.duration || 0;
             const newTime = (progress.value / 100) * dur;
-            mediaPlayer.currentTime = newTime;
+            currentPlayer.currentTime = newTime;
         });
-
+    
         // Real audio vizualizatori
         function setupVisualizer() {
+            if (!currentPlayer || currentPlayer === mediaPlayer) return;
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioContext.createAnalyser();
                 analyser.fftSize = 32;
                 dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-                const source = audioContext.createMediaElementSource(mediaPlayer);
+    
+                const source = audioContext.createMediaElementSource(currentPlayer);
                 source.connect(analyser);
                 analyser.connect(audioContext.destination);
             }
-
+    
             function animateVisualizer() {
-                if (mediaPlayer.paused) {
+                if (currentPlayer.paused) {
                     visualizerBars.forEach(bar => bar.style.height = '10px');
                     return;
                 }
-
+    
                 analyser.getByteFrequencyData(dataArray);
                 visualizerBars.forEach((bar, i) => {
                     const height = (dataArray[i] / 255) * 60;
                     bar.style.height = `${height}px`;
                 });
-
+    
                 requestAnimationFrame(animateVisualizer);
             }
-
+    
             animateVisualizer();
         }
-
+    
         // Vizualizatorni to'xtatish
         function stopVisualizer() {
             if (audioContext) {
@@ -1066,66 +1175,54 @@
                 playerBackdrop.classList.remove('active');
             }
         }
-
+    
         // Ovozli buyruqlarni qayta ishlash
-        function processCommand(command) {
-            if (command.includes('aziz')) {
-                clearTimeout(commandTimeout);
-                clearTimeout(silenceTimeout);
-
-                recognition.stop();
-                setTimeout(() => recognition.start(), 100);
-
-                commandTimeout = setTimeout(() => {
-                    silenceTimeout = setTimeout(() => {
-                        speak("Siz qanday kino yoki tarina eshitishni xohlaysiz?");
-                        commandTimeout = setTimeout(() => {
-                            recognition.stop();
-                            setTimeout(() => recognition.start(), 100);
-                        }, 5000);
-                    }, 4000);
-                }, 5000);
-
+        function processCommand(transcript) {
+            const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
+            let foundCommand = null;
+    
+            for (const cmd of validCommands) {
+                if (transcript.includes(cmd)) {
+                    foundCommand = cmd;
+                    break;
+                }
+            }
+    
+            if (!foundCommand) {
+                statusDiv.textContent = "Buyruq topilmadi";
                 return;
             }
-
-            const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch"];
-            const commandWord = command.split(' ').slice(-1)[0];
-
-            if (!validCommands.includes(commandWord)) return;
-
-            clearTimeout(commandTimeout);
-            clearTimeout(silenceTimeout);
-
-            switch (commandWord) {
+    
+            statusDiv.textContent = `Buyruq bajarildi: ${foundCommand}`;
+            statusDiv.classList.add('success');
+            setTimeout(() => statusDiv.classList.remove('success'), 2000);
+    
+            switch (foundCommand) {
                 case 'yon':
                     if (songs.length > 0) {
                         currentSongIndex = currentSongIndex === -1 ? 0 : currentSongIndex;
                         playSong(currentSongIndex);
-                        speak("Qo'shiq ijro etilmoqda.");
-                    } else {
-                        speak("Pleylist bo'sh.");
                     }
                     break;
                 case "to'xta":
-                    mediaPlayer.pause();
-                    playBtn.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M3 4v8l7-4-7-4z"/>
-                        </svg>
-                    `;
-                    speak("Qo'shiq to'xtatildi.");
-                    stopVisualizer();
+                    if (currentPlayer) {
+                        currentPlayer.pause();
+                        playBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3 4v8l7-4-7-4z"/>
+                            </svg>
+                        `;
+                        stopVisualizer();
+                    }
                     break;
                 case 'davom et':
-                    if (mediaPlayer.paused && songs.length > 0) {
-                        mediaPlayer.play();
+                    if (currentPlayer && currentPlayer.paused && songs.length > 0) {
+                        currentPlayer.play();
                         playBtn.innerHTML = `
                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
                             </svg>
                         `;
-                        speak("Qo'shiq davom etmoqda.");
                         setupVisualizer();
                     }
                     break;
@@ -1133,60 +1230,63 @@
                     if (songs.length > 0) {
                         currentSongIndex = (currentSongIndex + 1) % songs.length;
                         playSong(currentSongIndex);
-                        speak("Keyingi qo'shiq ijro etilmoqda.");
-                    } else {
-                        speak("Pleylist bo'sh.");
+                        statusDiv.textContent = `Keyingi qo‘shiq: ${songs[currentSongIndex].name}`;
                     }
                     break;
                 case 'avvalgi':
                     if (songs.length > 0) {
                         currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
                         playSong(currentSongIndex);
-                        speak("Avvalgi qo'shiq ijro etilmoqda.");
-                    } else {
-                        speak("Pleylist bo'sh.");
+                        statusDiv.textContent = `Avvalgi qo‘shiq: ${songs[currentSongIndex].name}`;
                     }
                     break;
                 case 'tamom':
-                    mediaPlayer.pause();
-                    mediaPlayer.currentTime = 0;
-                    playBtn.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M3 4v8l7-4-7-4z"/>
-                        </svg>
-                    `;
-                    stopVisualizer();
-                    speak("Qo'shiq tugadi.");
+                    if (currentPlayer) {
+                        currentPlayer.pause();
+                        currentPlayer.currentTime = 0;
+                        playBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3 4v8l7-4-7-4z"/>
+                            </svg>
+                        `;
+                        stopVisualizer();
+                    }
                     break;
                 case "o'ch":
                     recognition.stop();
                     isListening = false;
-                    speak("Mikrofon o'chirildi.");
+                    break;
+                case 'pasaytir':
+                    if (currentPlayer) {
+                        let volume = currentPlayer.volume;
+                        volume = Math.max(0, volume - 0.1);
+                        currentPlayer.volume = volume;
+                        statusDiv.textContent = `Ovoz ${Math.round(volume * 100)} foizga pasaytirildi`;
+                    }
+                    break;
+                case "ko'tar":
+                    if (currentPlayer) {
+                        let volume = currentPlayer.volume;
+                        volume = Math.min(1, volume + 0.1);
+                        currentPlayer.volume = volume;
+                        statusDiv.textContent = `Ovoz ${Math.round(volume * 100)} foizga ko'tarildi`;
+                    }
                     break;
             }
         }
-
-        // Ovozli javob berish
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'uz-UZ';
-            utterance.pitch = 1.5;
-            utterance.rate = 1.1;
-            window.speechSynthesis.speak(utterance);
-        }
-
+    
         // Play/Pause tugmasi
         playBtn.addEventListener('click', () => {
-            if (mediaPlayer.paused && songs.length > 0) {
-                mediaPlayer.play();
+            if (currentPlayer && currentPlayer.paused && songs.length > 0) {
+                currentPlayer.play();
                 playBtn.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
                     </svg>
                 `;
                 setupVisualizer();
-            } else {
-                mediaPlayer.pause();
+            } else if (currentPlayer) {
+                currentPlayer.pause();
                 playBtn.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M3 4v8l7-4-7-4z"/>
@@ -1195,7 +1295,7 @@
                 stopVisualizer();
             }
         });
-
+    
         // Oldinga va orqaga tugmalari
         nextBtn.addEventListener('click', () => {
             if (songs.length > 0) {
@@ -1203,27 +1303,36 @@
                 playSong(currentSongIndex);
             }
         });
-
+    
         prevBtn.addEventListener('click', () => {
             if (songs.length > 0) {
                 currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
                 playSong(currentSongIndex);
             }
         });
-
-        // Media player tugashida keyingi qo'shiqni avtomatik ijro etish
+    
+        // Media player tugashida keyingi faylni avtomatik ijro etish
         mediaPlayer.addEventListener('ended', () => {
             if (songs.length > 0) {
                 currentSongIndex = (currentSongIndex + 1) % songs.length;
                 playSong(currentSongIndex);
-                speak("Keyingi qo'shiq ijro etilmoqda.");
             } else {
                 stopVisualizer();
             }
         });
-
+    
+        audioPlayer.addEventListener('ended', () => {
+            if (songs.length > 0) {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                playSong(currentSongIndex);
+            } else {
+                stopVisualizer();
+            }
+        });
+    
         // Media player pauza holatida vizualizatorni to'xtatish
         mediaPlayer.addEventListener('pause', stopVisualizer);
+        audioPlayer.addEventListener('pause', stopVisualizer);
     </script>
 </body>
 </html>
