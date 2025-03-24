@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ovozli Musiqa va Video</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #FFD700;
@@ -71,6 +72,8 @@
             border-radius: 50px;
             padding: 0.5rem 1rem;
             border: 1px solid var(--border-color);
+            flex-grow: 1;
+            margin: 0 1rem;
         }
         
         .search-bar input {
@@ -569,8 +572,19 @@
         }
         
         @media (max-width: 768px) {
-            main {
-                flex-direction: column;
+            header {
+                flex-wrap: wrap;
+            }
+            
+            .search-bar {
+                width: 100%;
+                margin: 1rem 0;
+                display: flex;
+            }
+            
+            .user-controls {
+                width: 100%;
+                justify-content: space-between;
             }
             
             .sidebar {
@@ -597,13 +611,8 @@
             .logo {
                 font-size: 1.2rem;
             }
-            
-            .search-bar {
-                display: none;
-            }
         }
         
-        /* For screens smaller than 480px */
         @media (max-width: 480px) {
             .current-time {
                 display: none;
@@ -638,8 +647,8 @@
             </div>
             
             <div class="search-bar">
-                <input type="text" id="youtube-search-input" placeholder="Izlash...">
-                <button id="youtube-search-button">
+                <input type="text" id="general-search-input" placeholder="Umumiy izlash...">
+                <button id="general-search-button">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
@@ -839,6 +848,12 @@
                                 <td>Случайный порядок / Перемешивание</td>
                                 <td>Shuffle</td>
                             </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Qidirish</td>
+                                <td>Поиск</td>
+                                <td>Search</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -851,17 +866,16 @@
                         </h3>
                     </div>
                     
-                    <div class="search-bar">
-                <input type="text" id="youtube-search-input" placeholder="Izlash...">
-                <button id="youtube-search-button">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            
+                    <div class="youtube-search">
+                        <input type="text" id="youtube-search-input" placeholder="YouTube da izlash...">
+                        <button id="youtube-search-button">
+                            <i class="fas fa-search"></i>
+                            Izlash
+                        </button>
+                    </div>
                     
                     <div class="youtube-player-container">
                         <div id="youtube-player">
-                            <!-- YouTube player will be loaded here -->
                             YouTube video player will appear here
                         </div>
                     </div>
@@ -870,29 +884,28 @@
         </main>
         
         <footer>
-            <p>&copy; 2025 Ovozli Musiqa va Video. Barcha huquqlar himoyalangan.</p>
+            <p>© 2025 Ovozli Musiqa va Video. Barcha huquqlar himoyalangan.</p>
         </footer>
     </div>
     
     <div id="notification" class="notification"></div>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // YouTube API
         let player;
-        const API_KEY = 'AIzaSyAhB79h7SAKIwUiXt-pYlNmmPL_bhZ2_uQ';
+        const API_KEY = 'AIzaSyAhB79h7SAKIwUiXt-pYlNmmPL_bhZ2_uQ'; // Replace with your actual YouTube API key
         
-        // Load YouTube IFrame API
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         const firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         
-        // Initialize YouTube Player
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 height: '360',
                 width: '100%',
-                videoId: 'g9_4yUWZQ8I', // Default video (Can be changed to any Uzbek music video)
+                videoId: 'g9_4yUWZQ8I',
                 playerVars: {
                     'playsinline': 1,
                     'controls': 1,
@@ -906,20 +919,16 @@
         }
         
         function onPlayerReady(event) {
-            // YouTube player is ready
             console.log('YouTube player is ready');
         }
         
         function onPlayerStateChange(event) {
-            // Handle player state changes if needed
+            // Handle state changes if needed
         }
         
-        // Search YouTube
         document.getElementById('youtube-search-button').addEventListener('click', searchYouTube);
         document.getElementById('youtube-search-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchYouTube();
-            }
+            if (e.key === 'Enter') searchYouTube();
         });
         
         function searchYouTube() {
@@ -931,7 +940,7 @@
                         if (data.items && data.items.length > 0) {
                             const videoId = data.items[0].id.videoId;
                             player.loadVideoById(videoId);
-                            showNotification(`"${query}" videoları topildi`);
+                            showNotification(`"${query}" videolari topildi`);
                         } else {
                             showNotification('Video topilmadi');
                         }
@@ -954,567 +963,468 @@
         const progressBar = document.getElementById('progress-bar');
         const progressFill = document.getElementById('progress-fill');
         const currentTimeElement = document.getElementById('current-time');
-const durationElement = document.getElementById('duration');
-const playerTitle = document.getElementById('player-title');
-const playerStatus = document.getElementById('player-status');
-const muteButton = document.getElementById('mute-button');
-const volumeSlider = document.getElementById('volume-slider');
-const volumeLevel = document.getElementById('volume-level');
-const playlistItems = document.getElementById('playlist-items');
-const emptyPlaylist = document.getElementById('empty-playlist');
-const fileInput = document.getElementById('file-input');
-const uploadButton = document.getElementById('upload-button');
-const uploadArea = document.getElementById('upload-area');
-const menuToggle = document.getElementById('menu-toggle');
-const sidebar = document.getElementById('sidebar');
-const themeToggle = document.getElementById('theme-toggle');
-const notification = document.getElementById('notification');
-const currentTimeDisplay = document.getElementById('current-time');
+        const durationElement = document.getElementById('duration');
+        const playerTitle = document.getElementById('player-title');
+        const playerStatus = document.getElementById('player-status');
+        const muteButton = document.getElementById('mute-button');
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeLevel = document.getElementById('volume-level');
+        const playlistItems = document.getElementById('playlist-items');
+        const emptyPlaylist = document.getElementById('empty-playlist');
+        const fileInput = document.getElementById('file-input');
+        const uploadButton = document.getElementById('upload-button');
+        const uploadArea = document.getElementById('upload-area');
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const themeToggle = document.getElementById('theme-toggle');
+        const notification = document.getElementById('notification');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const generalSearchButton = document.getElementById('general-search-button');
+        const generalSearchInput = document.getElementById('general-search-input');
 
-// Playlist and player state
-let playlist = [];
-let currentTrackIndex = -1;
-let isPlaying = false;
-let isShuffle = false;
-let repeatMode = 'none'; // 'none', 'one', 'all'
-let currentMedia = null;
+        let playlist = [];
+        let currentTrackIndex = -1;
+        let isPlaying = false;
+        let isShuffle = false;
+        let repeatMode = 'none';
+        let currentMedia = null;
 
-// Initialize time display
-function updateCurrentTime() {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    currentTimeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
-}
+        function updateCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            currentTimeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+        }
 
-setInterval(updateCurrentTime, 1000);
-updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime();
 
-// Theme toggle
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('light-theme');
-    
-    if (document.body.classList.contains('light-theme')) {
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        showNotification('Yorug\' mavzu yoqildi');
-    } else {
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        showNotification('Qorong\'u mavzu yoqildi');
-    }
-});
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                showNotification('Yorug\' mavzu yoqildi');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                showNotification('Qorong\'u mavzu yoqildi');
+            }
+        });
 
-// Mobile menu toggle
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('show');
-});
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
 
-// Show notification
-function showNotification(message) {
-    notification.textContent = message;
-    notification.classList.add('show');
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
-}
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => notification.classList.remove('show'), 3000);
+        }
 
-// File upload handling
-uploadButton.addEventListener('click', () => {
-    fileInput.click();
-});
+        uploadButton.addEventListener('click', () => fileInput.click());
 
-uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = 'var(--primary-color)';
-});
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary-color)';
+        });
 
-uploadArea.addEventListener('dragleave', () => {
-    uploadArea.style.borderColor = 'var(--border-color)';
-});
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'var(--border-color)';
+        });
 
-uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.style.borderColor = 'var(--border-color)';
-    
-    if (e.dataTransfer.files.length > 0) {
-        handleFiles(e.dataTransfer.files);
-    }
-});
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border-color)';
+            if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+        });
 
-fileInput.addEventListener('change', () => {
-    if (fileInput.files.length > 0) {
-        handleFiles(fileInput.files);
-    }
-});
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) handleFiles(fileInput.files);
+        });
 
-function handleFiles(files) {
-    const mediaFiles = Array.from(files).filter(file => 
-        file.type.startsWith('audio/') || file.type.startsWith('video/')
-    );
-    
-    if (mediaFiles.length > 0) {
-        mediaFiles.forEach(file => addToPlaylist(file));
-        showNotification(`${mediaFiles.length} fayl yuklandi`);
-    } else {
-        showNotification('Qo\'llab-quvvatlanmaydigan fayl turi');
-    }
-}
+        function handleFiles(files) {
+            const mediaFiles = Array.from(files).filter(file => 
+                file.type.startsWith('audio/') || file.type.startsWith('video/')
+            );
+            if (mediaFiles.length > 0) {
+                mediaFiles.forEach(file => addToPlaylist(file));
+                showNotification(`${mediaFiles.length} fayl yuklandi`);
+            } else {
+                showNotification('Qo\'llab-quvvatlanmaydigan fayl turi');
+            }
+        }
 
-function addToPlaylist(file) {
-    const fileURL = URL.createObjectURL(file);
-    const fileType = file.type.startsWith('audio/') ? 'audio' : 'video';
-    
-    const track = {
-        name: file.name,
-        url: fileURL,
-        type: fileType
-    };
-    
-    playlist.push(track);
-    updatePlaylistUI();
-    
-    if (playlist.length === 1) {
-        loadTrack(0);
-    }
-}
+        function addToPlaylist(file) {
+            const fileURL = URL.createObjectURL(file);
+            const fileType = file.type.startsWith('audio/') ? 'audio' : 'video';
+            const track = { name: file.name, url: fileURL, type: fileType };
+            playlist.push(track);
+            updatePlaylistUI();
+            if (playlist.length === 1) loadTrack(0);
+        }
 
-function updatePlaylistUI() {
-    if (playlist.length > 0) {
-        emptyPlaylist.style.display = 'none';
-        playlistItems.innerHTML = '';
-        
-        playlist.forEach((track, index) => {
-            const item = document.createElement('div');
-            item.className = 'playlist-item';
+        function updatePlaylistUI() {
+            if (playlist.length > 0) {
+                emptyPlaylist.style.display = 'none';
+                playlistItems.innerHTML = '';
+                playlist.forEach((track, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'playlist-item';
+                    if (index === currentTrackIndex) item.classList.add('active');
+                    item.innerHTML = `
+                        <div class="playlist-item-name">
+                            <i class="fas fa-${track.type === 'audio' ? 'music' : 'film'}"></i>
+                            ${track.name}
+                        </div>
+                        <button class="playlist-item-delete" data-index="${index}">
+                            < platinum class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    item.addEventListener('click', (e) => {
+                        if (!e.target.closest('.playlist-item-delete')) loadTrack(index);
+                    });
+                    playlistItems.appendChild(item);
+                });
+                document.querySelectorAll('.playlist-item-delete').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const index = parseInt(button.getAttribute('data-index'));
+                        removeFromPlaylist(index);
+                    });
+                });
+            } else {
+                emptyPlaylist.style.display = 'block';
+                playlistItems.innerHTML = '';
+            }
+        }
+
+        function removeFromPlaylist(index) {
             if (index === currentTrackIndex) {
-                item.classList.add('active');
+                stopPlayback();
+                currentTrackIndex = -1;
+            } else if (index < currentTrackIndex) {
+                currentTrackIndex--;
             }
-            
-            item.innerHTML = `
-                <div class="playlist-item-name">
-                    <i class="fas fa-${track.type === 'audio' ? 'music' : 'film'}"></i>
-                    ${track.name}
-                </div>
-                <button class="playlist-item-delete" data-index="${index}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            `;
-            
-            item.addEventListener('click', (e) => {
-                if (!e.target.closest('.playlist-item-delete')) {
-                    loadTrack(index);
+            playlist.splice(index, 1);
+            updatePlaylistUI();
+            showNotification('Fayl o\'chirildi');
+            if (playlist.length > 0 && currentTrackIndex === -1) loadTrack(0);
+        }
+
+        function loadTrack(index) {
+            if (index >= 0 && index < playlist.length) {
+                stopPlayback();
+                currentTrackIndex = index;
+                const track = playlist[index];
+                playerTitle.textContent = track.name;
+                playerStatus.textContent = track.type === 'audio' ? 'Audio' : 'Video';
+                if (track.type === 'audio') {
+                    audioPlayer.src = track.url;
+                    videoPlayer.style.display = 'none';
+                    audioPlayer.style.display = 'block';
+                    currentMedia = audioPlayer;
+                    document.querySelector('.media-icon').innerHTML = '<i class="fas fa-music"></i>';
+                } else {
+                    videoPlayer.src = track.url;
+                    audioPlayer.style.display = 'none';
+                    videoPlayer.style.display = 'block';
+                    currentMedia = videoPlayer;
+                    document.querySelector('.media-icon').innerHTML = '<i class="fas fa-film"></i>';
                 }
-            });
-            
-            playlistItems.appendChild(item);
+                updatePlaylistUI();
+                playTrack();
+            }
+        }
+
+        function playTrack() {
+            if (currentMedia) {
+                currentMedia.play().then(() => {
+                    isPlaying = true;
+                    playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                    document.querySelector('.media-icon').style.display = 'none';
+                }).catch(error => {
+                    console.error('Playback error:', error);
+                    showNotification('Ijro etishda xatolik');
+                });
+            }
+        }
+
+        function pauseTrack() {
+            if (currentMedia && !currentMedia.paused) {
+                currentMedia.pause();
+                isPlaying = false;
+                playButton.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        function stopPlayback() {
+            if (currentMedia) {
+                currentMedia.pause();
+                currentMedia.currentTime = 0;
+                isPlaying = false;
+                playButton.innerHTML = '<i class="fas fa-play"></i>';
+                document.querySelector('.media-icon').style.display = 'block';
+            }
+        }
+
+        function playNextTrack() {
+            if (playlist.length === 0) return;
+            let nextIndex = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentTrackIndex + 1) % playlist.length;
+            loadTrack(nextIndex);
+        }
+
+        function playPrevTrack() {
+            if (playlist.length === 0) return;
+            let prevIndex = currentTrackIndex > 0 ? currentTrackIndex - 1 : playlist.length - 1;
+            loadTrack(prevIndex);
+        }
+
+        playButton.addEventListener('click', () => {
+            if (currentMedia) {
+                if (isPlaying) pauseTrack();
+                else playTrack();
+            } else if (playlist.length > 0) loadTrack(0);
         });
-        
-        // Add delete event listeners
-        document.querySelectorAll('.playlist-item-delete').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const index = parseInt(button.getAttribute('data-index'));
-                removeFromPlaylist(index);
-            });
+
+        prevButton.addEventListener('click', playPrevTrack);
+        nextButton.addEventListener('click', playNextTrack);
+
+        shuffleButton.addEventListener('click', () => {
+            isShuffle = !isShuffle;
+            shuffleButton.classList.toggle('active', isShuffle);
+            showNotification(isShuffle ? 'Aralashtirish yoqildi' : 'Aralashtirish o\'chirildi');
         });
-    } else {
-        emptyPlaylist.style.display = 'block';
-        playlistItems.innerHTML = '';
-    }
-}
 
-function removeFromPlaylist(index) {
-    // If the current track is being removed
-    if (index === currentTrackIndex) {
-        stopPlayback();
-        currentTrackIndex = -1;
-    } else if (index < currentTrackIndex) {
-        currentTrackIndex--;
-    }
-    
-    playlist.splice(index, 1);
-    updatePlaylistUI();
-    showNotification('Fayl o\'chirildi');
-    
-    if (playlist.length > 0 && currentTrackIndex === -1) {
-        loadTrack(0);
-    }
-}
+        repeatButton.addEventListener('click', () => {
+            if (repeatMode === 'none') {
+                repeatMode = 'one';
+                repeatButton.classList.add('active');
+                repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i><span>1</span>';
+                showNotification('Bir marta takrorlash');
+            } else if (repeatMode === 'one') {
+                repeatMode = 'all';
+                repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i>';
+                showNotification('Hammasini takrorlash');
+            } else {
+                repeatMode = 'none';
+                repeatButton.classList.remove('active');
+                showNotification('Takrorlash o\'chirildi');
+            }
+        });
 
-function loadTrack(index) {
-    if (index >= 0 && index < playlist.length) {
-        stopPlayback();
-        currentTrackIndex = index;
-        const track = playlist[index];
-        
-        playerTitle.textContent = track.name;
-        playerStatus.textContent = track.type === 'audio' ? 'Audio' : 'Video';
-        
-        if (track.type === 'audio') {
-            audioPlayer.src = track.url;
-            videoPlayer.style.display = 'none';
-            audioPlayer.style.display = 'block';
-            currentMedia = audioPlayer;
-            document.querySelector('.media-icon').innerHTML = '<i class="fas fa-music"></i>';
-        } else {
-            videoPlayer.src = track.url;
-            audioPlayer.style.display = 'none';
-            videoPlayer.style.display = 'block';
-            currentMedia = videoPlayer;
-            document.querySelector('.media-icon').innerHTML = '<i class="fas fa-film"></i>';
+        function setupMediaListeners(media) {
+            media.addEventListener('timeupdate', updateProgress);
+            media.addEventListener('ended', handleTrackEnd);
+            media.addEventListener('loadedmetadata', updateDuration);
         }
-        
-        updatePlaylistUI();
-        playTrack();
-    }
-}
 
-function playTrack() {
-    if (currentMedia) {
-        currentMedia.play()
-            .then(() => {
-                isPlaying = true;
-                playButton.innerHTML = '<i class="fas fa-pause"></i>';
-                document.querySelector('.media-icon').style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Playback error:', error);
-                showNotification('Ijro etishda xatolik');
+        setupMediaListeners(audioPlayer);
+        setupMediaListeners(videoPlayer);
+
+        function updateProgress() {
+            if (currentMedia) {
+                const percent = (currentMedia.currentTime / currentMedia.duration) * 100;
+                progressFill.style.width = `${percent}%`;
+                currentTimeElement.textContent = formatTime(currentMedia.currentTime);
+            }
+        }
+
+        function updateDuration() {
+            if (currentMedia && !isNaN(currentMedia.duration)) {
+                durationElement.textContent = formatTime(currentMedia.duration);
+            }
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function handleTrackEnd() {
+            if (repeatMode === 'one') {
+                currentMedia.currentTime = 0;
+                playTrack();
+            } else if (repeatMode === 'all' || currentTrackIndex < playlist.length - 1) {
+                playNextTrack();
+            } else {
+                stopPlayback();
+                currentMedia.currentTime = 0;
+            }
+        }
+
+        progressBar.addEventListener('click', (e) => {
+            if (currentMedia && currentMedia.duration) {
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                currentMedia.currentTime = percent * currentMedia.duration;
+            }
+        });
+
+        muteButton.addEventListener('click', () => {
+            if (currentMedia) {
+                currentMedia.muted = !currentMedia.muted;
+                if (currentMedia.muted) {
+                    muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    volumeLevel.style.width = '0%';
+                    showNotification('Ovoz o\'chirildi');
+                } else {
+                    muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    volumeLevel.style.width = `${volumeSlider.value}%`;
+                    showNotification('Ovoz yoqildi');
+                }
+            }
+        });
+
+        volumeSlider.addEventListener('input', () => {
+            const volumeValue = volumeSlider.value;
+            if (currentMedia) {
+                currentMedia.volume = volumeValue / 100;
+                currentMedia.muted = false;
+                volumeLevel.style.width = `${volumeValue}%`;
+                muteButton.innerHTML = volumeValue > 50 ? '<i class="fas fa-volume-up"></i>' : 
+                                      volumeValue > 0 ? '<i class="fas fa-volume-down"></i>' : 
+                                      '<i class="fas fa-volume-mute"></i>';
+            }
+        });
+
+        volumeSlider.value = 80;
+        volumeLevel.style.width = '80%';
+
+        // General search (placeholder functionality)
+        generalSearchButton.addEventListener('click', () => {
+            const query = generalSearchInput.value.trim();
+            if (query) showNotification(`Umumiy qidiruv: "${query}"`);
+        });
+
+        generalSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generalSearchButton.click();
+        });
+
+        // Voice recognition
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'uz-UZ';
+
+            recognition.onresult = function(event) {
+                const command = event.results[event.results.length - 1][0].transcript.toLowerCase();
+                processVoiceCommand(command);
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error', event.error);
+                showNotification('Ovozli buyruqda xatolik');
+            };
+
+            function startVoiceRecognition() {
+                try {
+                    recognition.start();
+                    showNotification('Ovozli buyruqlar yoqildi');
+                } catch (e) {
+                    console.error('Could not start speech recognition', e);
+                }
+            }
+
+            // Start recognition on page load and say greeting
+            window.addEventListener('load', () => {
+                speak('Assalomu alekum siz qanday tarona hohlayapsiz');
+                setTimeout(startVoiceRecognition, 1000); // Delay to ensure greeting is spoken first
             });
-    }
-}
 
-function pauseTrack() {
-    if (currentMedia && !currentMedia.paused) {
-        currentMedia.pause();
-        isPlaying = false;
-        playButton.innerHTML = '<i class="fas fa-play"></i>';
-    }
-}
-
-function stopPlayback() {
-    if (currentMedia) {
-        currentMedia.pause();
-        currentMedia.currentTime = 0;
-        isPlaying = false;
-        playButton.innerHTML = '<i class="fas fa-play"></i>';
-        document.querySelector('.media-icon').style.display = 'block';
-    }
-}
-
-function playNextTrack() {
-    if (playlist.length === 0) return;
-    
-    let nextIndex;
-    
-    if (isShuffle) {
-        nextIndex = Math.floor(Math.random() * playlist.length);
-    } else {
-        nextIndex = (currentTrackIndex + 1) % playlist.length;
-    }
-    
-    loadTrack(nextIndex);
-}
-
-function playPrevTrack() {
-    if (playlist.length === 0) return;
-    
-    let prevIndex;
-    
-    if (currentTrackIndex > 0) {
-        prevIndex = currentTrackIndex - 1;
-    } else {
-        prevIndex = playlist.length - 1;
-    }
-    
-    loadTrack(prevIndex);
-}
-
-// Player controls event listeners
-playButton.addEventListener('click', () => {
-    if (currentMedia) {
-        if (isPlaying) {
-            pauseTrack();
-        } else {
-            playTrack();
-        }
-    } else if (playlist.length > 0) {
-        loadTrack(0);
-    }
-});
-
-prevButton.addEventListener('click', playPrevTrack);
-nextButton.addEventListener('click', playNextTrack);
-
-shuffleButton.addEventListener('click', () => {
-    isShuffle = !isShuffle;
-    shuffleButton.classList.toggle('active', isShuffle);
-    showNotification(isShuffle ? 'Aralashtirish yoqildi' : 'Aralashtirish o\'chirildi');
-});
-
-repeatButton.addEventListener('click', () => {
-    if (repeatMode === 'none') {
-        repeatMode = 'one';
-        repeatButton.classList.add('active');
-        repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i><span>1</span>';
-        showNotification('Bir marta takrorlash');
-    } else if (repeatMode === 'one') {
-        repeatMode = 'all';
-        repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i>';
-        showNotification('Hammasini takrorlash');
-    } else {
-        repeatMode = 'none';
-        repeatButton.classList.remove('active');
-        showNotification('Takrorlash o\'chirildi');
-    }
-});
-
-// Media event listeners
-function setupMediaListeners(media) {
-    media.addEventListener('timeupdate', updateProgress);
-    media.addEventListener('ended', handleTrackEnd);
-    media.addEventListener('loadedmetadata', updateDuration);
-}
-
-setupMediaListeners(audioPlayer);
-setupMediaListeners(videoPlayer);
-
-function updateProgress() {
-    if (currentMedia) {
-        const percent = (currentMedia.currentTime / currentMedia.duration) * 100;
-        progressFill.style.width = `${percent}%`;
-        
-        const formattedTime = formatTime(currentMedia.currentTime);
-        currentTimeElement.textContent = formattedTime;
-    }
-}
-
-function updateDuration() {
-    if (currentMedia && !isNaN(currentMedia.duration)) {
-        const formattedDuration = formatTime(currentMedia.duration);
-        durationElement.textContent = formattedDuration;
-    }
-}
-
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
-}
-
-function handleTrackEnd() {
-    if (repeatMode === 'one') {
-        currentMedia.currentTime = 0;
-        playTrack();
-    } else if (repeatMode === 'all' || currentTrackIndex < playlist.length - 1) {
-        playNextTrack();
-    } else {
-        stopPlayback();
-        currentMedia.currentTime = 0;
-    }
-}
-
-// Progress bar interaction
-progressBar.addEventListener('click', (e) => {
-    if (currentMedia && currentMedia.duration) {
-        const progressBarRect = progressBar.getBoundingClientRect();
-        const percent = (e.clientX - progressBarRect.left) / progressBarRect.width;
-        currentMedia.currentTime = percent * currentMedia.duration;
-    }
-});
-
-// Volume control
-muteButton.addEventListener('click', () => {
-    if (currentMedia) {
-        currentMedia.muted = !currentMedia.muted;
-        
-        if (currentMedia.muted) {
-            muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            volumeLevel.style.width = '0%';
-            showNotification('Ovoz o\'chirildi');
-        } else {
-            muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-            volumeLevel.style.width = `${volumeSlider.value}%`;
-            showNotification('Ovoz yoqildi');
-        }
-    }
-});
-
-volumeSlider.addEventListener('input', () => {
-    const volumeValue = volumeSlider.value;
-    
-    if (currentMedia) {
-        currentMedia.volume = volumeValue / 100;
-        currentMedia.muted = false;
-        volumeLevel.style.width = `${volumeValue}%`;
-        
-        if (volumeValue > 50) {
-            muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-        } else if (volumeValue > 0) {
-            muteButton.innerHTML = '<i class="fas fa-volume-down"></i>';
-        } else {
-            muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        }
-    }
-});
-
-// Initialize volume
-volumeSlider.value = 80;
-volumeLevel.style.width = '80%';
-
-// Voice recognition for commands
-if ('webkitSpeechRecognition' in window) {
-    const recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'uz-UZ'; // Default to Uzbek
-    
-    recognition.onresult = function(event) {
-        const command = event.results[event.results.length - 1][0].transcript.toLowerCase();
-        processVoiceCommand(command);
-    };
-    
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error', event.error);
-        showNotification('Ovozli buyruqda xatolik');
-    };
-    
-    // Start voice recognition
-    function startVoiceRecognition() {
-        try {
-            recognition.start();
-            showNotification('Ovozli buyruqlar yoqildi');
-        } catch (e) {
-            console.error('Could not start speech recognition', e);
-        }
-    }
-    
-    // Try to start voice recognition after user interaction
-    document.addEventListener('click', function() {
-        if (!recognition.started) {
-            startVoiceRecognition();
-            recognition.started = true;
-        }
-    }, { once: true });
-    
-    function processVoiceCommand(command) {
-        // Uzbek commands
-        if (command.includes('balandlash') || command.includes('oshirish')) {
-            increaseVolume();
-        } else if (command.includes('pasaytirish') || command.includes('kamaytirish')) {
-            decreaseVolume();
-        } else if (command.includes('keyingi')) {
-            playNextTrack();
-        } else if (command.includes('avvalgi')) {
-            playPrevTrack();
-        } else if (command.includes('to\'xtat') || command.includes("to'xtat")) {
-            pauseTrack();
-        } else if (command.includes('davom et')) {
-            playTrack();
-        } else if (command.includes('ochir')) {
-            if (currentTrackIndex >= 0) {
-                removeFromPlaylist(currentTrackIndex);
+            let resumeTimeout;
+            function processVoiceCommand(command) {
+                if (command.includes('aziza')) {
+                    pauseTrack();
+                    speak('Assalomu alekum siz qanday tarona hohlayapsiz');
+                    clearTimeout(resumeTimeout);
+                    resumeTimeout = setTimeout(() => {
+                        if (!isPlaying) playTrack();
+                    }, 15000);
+                } else if (command.includes('labay')) {
+                    speak('Labay');
+                    clearTimeout(resumeTimeout);
+                    resumeTimeout = setTimeout(() => {
+                        if (!isPlaying) playTrack();
+                    }, 15000);
+                } else if (command.includes('balandlash') || command.includes('oshirish') || 
+                           command.includes('увеличить') || command.includes('increase')) {
+                    increaseVolume();
+                } else if (command.includes('pasaytirish') || command.includes('kamaytirish') || 
+                           command.includes('уменьшить') || command.includes('decrease')) {
+                    decreaseVolume();
+                } else if (command.includes('keyingi') || command.includes('следующий') || 
+                           command.includes('next')) {
+                    playNextTrack();
+                } else if (command.includes('avvalgi') || command.includes('предыдущий') || 
+                           command.includes('previous')) {
+                    playPrevTrack();
+                } else if (command.includes('to\'xtat') || command.includes('пауза') || 
+                           command.includes('pause')) {
+                    pauseTrack();
+                } else if (command.includes('davom et') || command.includes('продолжить') || 
+                           command.includes('continue')) {
+                    playTrack();
+                } else if (command.includes('ochir') || command.includes('удалить') || 
+                           command.includes('delete')) {
+                    if (currentTrackIndex >= 0) removeFromPlaylist(currentTrackIndex);
+                } else if (command.includes('ijro et') || command.includes('oynat') || 
+                           command.includes('воспроизвести') || command.includes('play')) {
+                    playTrack();
+                } else if (command.includes('to\'xtatish') || command.includes('стоп') || 
+                           command.includes('stop')) {
+                    stopPlayback();
+                } else if (command.includes('sukutlash') || command.includes('jim') || 
+                           command.includes('без звука') || command.includes('выключить звук') || 
+                           command.includes('mute')) {
+                    toggleMute();
+                } else if (command.includes('qaytarish') || command.includes('takrorlash') || 
+                           command.includes('повторить') || command.includes('repeat')) {
+                    toggleRepeat();
+                } else if (command.includes('aralashtirish') || command.includes('случайный') || 
+                           command.includes('перемешивание') || command.includes('shuffle')) {
+                    toggleShuffle();
+                } else if (command.includes('qidirish') || command.includes('поиск') || 
+                           command.includes('search')) {
+                    const query = generalSearchInput.value.trim() || 'default search';
+                    showNotification(`Qidiruv: "${query}"`);
+                    searchYouTube(query); // Optionally trigger YouTube search
+                }
             }
-        } else if (command.includes('ijro et') || command.includes('oynat')) {
-            playTrack();
-        } else if (command.includes('to\'xtatish') || command.includes("to'xtatish")) {
-            stopPlayback();
-        } else if (command.includes('sukutlash') || command.includes('jim')) {
-            toggleMute();
-        } else if (command.includes('qaytarish') || command.includes('takrorlash')) {
-            toggleRepeat();
-        } else if (command.includes('aralashtirish')) {
-            toggleShuffle();
-        }
-        
-        // Russian commands
-        else if (command.includes('увеличить')) {
-            increaseVolume();
-        } else if (command.includes('уменьшить')) {
-            decreaseVolume();
-        } else if (command.includes('следующий')) {
-            playNextTrack();
-        } else if (command.includes('предыдущий')) {
-            playPrevTrack();
-        } else if (command.includes('пауза')) {
-            pauseTrack();
-        } else if (command.includes('продолжить')) {
-            playTrack();
-        } else if (command.includes('удалить')) {
-            if (currentTrackIndex >= 0) {
-                removeFromPlaylist(currentTrackIndex);
+
+            function speak(text) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'uz-UZ';
+                speechSynthesis.speak(utterance);
             }
-        } else if (command.includes('воспроизвести')) {
-            playTrack();
-        } else if (command.includes('стоп')) {
-            stopPlayback();
-        } else if (command.includes('без звука') || command.includes('выключить звук')) {
-            toggleMute();
-        } else if (command.includes('повторить')) {
-            toggleRepeat();
-        } else if (command.includes('случайный') || command.includes('перемешивание')) {
-            toggleShuffle();
-        }
-        
-        // English commands
-        else if (command.includes('increase')) {
-            increaseVolume();
-        } else if (command.includes('decrease')) {
-            decreaseVolume();
-        } else if (command.includes('next')) {
-            playNextTrack();
-        } else if (command.includes('previous')) {
-            playPrevTrack();
-        } else if (command.includes('pause')) {
-            pauseTrack();
-        } else if (command.includes('continue')) {
-            playTrack();
-        } else if (command.includes('delete')) {
-            if (currentTrackIndex >= 0) {
-                removeFromPlaylist(currentTrackIndex);
+
+            function increaseVolume() {
+                const newVolume = Math.min(100, parseInt(volumeSlider.value) + 10);
+                volumeSlider.value = newVolume;
+                volumeSlider.dispatchEvent(new Event('input'));
+                showNotification(`Ovoz ${newVolume}%`);
             }
-        } else if (command.includes('play')) {
-            playTrack();
-        } else if (command.includes('stop')) {
-            stopPlayback();
-        } else if (command.includes('mute')) {
-            toggleMute();
-        } else if (command.includes('repeat')) {
-            toggleRepeat();
-        } else if (command.includes('shuffle')) {
-            toggleShuffle();
+
+            function decreaseVolume() {
+                const newVolume = Math.max(0, parseInt(volumeSlider.value) - 10);
+                volumeSlider.value = newVolume;
+                volumeSlider.dispatchEvent(new Event('input'));
+                showNotification(`Ovoz ${newVolume}%`);
+            }
+
+            function toggleMute() {
+                if (currentMedia) muteButton.click();
+            }
+
+            function toggleRepeat() {
+                repeatButton.click();
+            }
+
+            function toggleShuffle() {
+                shuffleButton.click();
+            }
         }
-    }
-    
-    function increaseVolume() {
-        const newVolume = Math.min(100, parseInt(volumeSlider.value) + 10);
-        volumeSlider.value = newVolume;
-        volumeSlider.dispatchEvent(new Event('input'));
-        showNotification(`Ovoz ${newVolume}%`);
-    }
-    
-    function decreaseVolume() {
-        const newVolume = Math.max(0, parseInt(volumeSlider.value) - 10);
-        volumeSlider.value = newVolume;
-        volumeSlider.dispatchEvent(new Event('input'));
-        showNotification(`Ovoz ${newVolume}%`);
-    }
-    
-    function toggleMute() {
-        if (currentMedia) {
-            muteButton.click();
-        }
-    }
-    
-    function toggleRepeat() {
-        repeatButton.click();
-    }
-    
-    function toggleShuffle() {
-        shuffleButton.click();
-    }
-}
     </script>
 </body>
 </html>
