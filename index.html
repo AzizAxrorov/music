@@ -6,26 +6,27 @@
     <title>Ovozli Qo'shiq va Video Boshqaruvi</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Oldingi stillar o'zgarishsiz qoldirildi */
         :root {
             --primary-color: #ffcc00;
             --dark-color: #222222;
             --light-color: #f5f5f5;
             --accent-color: #fc3f1d;
         }
-        
+
         body {
             background-color: var(--dark-color);
             color: var(--light-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        
+
         .app-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         .header {
             display: flex;
             align-items: center;
@@ -33,7 +34,7 @@
             padding-bottom: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        
+
         .logo {
             font-size: 26px;
             font-weight: bold;
@@ -42,11 +43,11 @@
             display: flex;
             align-items: center;
         }
-        
+
         .logo svg {
             margin-right: 10px;
         }
-        
+
         .clock {
             font-size: 20px;
             font-weight: 500;
@@ -56,7 +57,7 @@
             border-radius: 8px;
             margin-left: auto;
         }
-        
+
         .card {
             background-color: #333;
             border: none;
@@ -65,7 +66,7 @@
             margin-bottom: 20px;
             overflow: hidden;
         }
-        
+
         .card-header {
             background-color: #444;
             color: var(--primary-color);
@@ -73,14 +74,14 @@
             padding: 15px 20px;
             border-bottom: 1px solid #555;
         }
-        
+
         .controls {
             display: flex;
             align-items: center;
             gap: 15px;
             margin-bottom: 20px;
         }
-        
+
         .mic-btn {
             position: relative;
             width: 50px;
@@ -95,23 +96,23 @@
             transition: all 0.3s;
             border: none;
         }
-        
+
         .mic-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 15px rgba(255, 204, 0, 0.4);
         }
-        
+
         .mic-btn.listening {
             background-color: var(--accent-color);
             animation: pulse-red 1.5s infinite;
         }
-        
+
         @keyframes pulse-red {
             0% { box-shadow: 0 0 0 0 rgba(252, 63, 29, 0.5); }
             70% { box-shadow: 0 0 0 15px rgba(252, 63, 29, 0); }
             100% { box-shadow: 0 0 0 0 rgba(252, 63, 29, 0); }
         }
-        
+
         .status {
             background-color: #444;
             padding: 10px 15px;
@@ -120,40 +121,40 @@
             min-width: 200px;
             transition: all 0.3s;
         }
-        
+
         .status.success {
             background-color: rgba(40, 167, 69, 0.3);
         }
-        
+
         .status.error {
             background-color: rgba(220, 53, 69, 0.3);
         }
-        
+
         .playlist-container {
             max-height: 500px;
             overflow-y: auto;
             background-color: #2a2a2a;
             border-radius: 8px;
         }
-        
+
         .playlist-container::-webkit-scrollbar {
             width: 8px;
         }
-        
+
         .playlist-container::-webkit-scrollbar-track {
             background: #333;
             border-radius: 10px;
         }
-        
+
         .playlist-container::-webkit-scrollbar-thumb {
             background: #555;
             border-radius: 10px;
         }
-        
+
         .playlist-container::-webkit-scrollbar-thumb:hover {
             background: #666;
         }
-        
+
         .song-item {
             display: flex;
             align-items: center;
@@ -162,37 +163,37 @@
             transition: all 0.2s;
             cursor: pointer;
         }
-        
+
         .song-item:hover {
             background-color: #3a3a3a;
         }
-        
+
         .song-item.active {
             background-color: rgba(255, 204, 0, 0.15);
             border-left: 4px solid var(--primary-color);
         }
-        
+
         .song-number {
             width: 30px;
             color: #888;
             font-weight: 600;
         }
-        
+
         .song-info {
             flex-grow: 1;
             margin-left: 10px;
         }
-        
+
         .song-title {
             font-weight: 500;
             color: var(--light-color);
         }
-        
+
         .song-actions {
             display: flex;
             gap: 8px;
         }
-        
+
         .action-btn {
             width: 36px;
             height: 36px;
@@ -205,21 +206,21 @@
             color: var(--light-color);
             transition: all 0.2s;
         }
-        
+
         .action-btn:hover {
             background-color: #555;
             transform: scale(1.1);
         }
-        
+
         .action-btn.primary {
             background-color: var(--primary-color);
             color: var(--dark-color);
         }
-        
+
         .action-btn.primary:hover {
             background-color: #ffd633;
         }
-        
+
         .player-container {
             background-color: #2a2a2a;
             border-radius: 10px;
@@ -228,38 +229,39 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .player-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
-        
+
         .player-title {
             font-weight: 600;
             color: var(--primary-color);
         }
-        
+
         .player-visual {
             position: relative;
         }
-        
+
         .media-player-wrapper {
             border-radius: 8px;
             overflow: hidden;
             background-color: #222;
             margin-bottom: 15px;
             position: relative;
-            display: block; /* Video va audio ko'rsatish uchun */
+            display: block;
         }
-        
-        #media-player {
+
+        #media-player,
+        #audio-player {
             width: 100%;
             border-radius: 8px;
             background-color: #222;
         }
-        
+
         .now-playing {
             display: flex;
             flex-direction: column;
@@ -269,7 +271,7 @@
             border-radius: 8px;
             margin-top: 15px;
         }
-        
+
         .album-art {
             width: 150px;
             height: 150px;
@@ -280,18 +282,18 @@
             justify-content: center;
             margin-bottom: 20px;
         }
-        
+
         .album-art svg {
             width: 80px;
             height: 80px;
             color: #888;
         }
-        
+
         .now-playing-info {
             text-align: center;
             margin-bottom: 20px;
         }
-        
+
         .now-playing-title {
             font-weight: 600;
             font-size: 18px;
@@ -301,25 +303,25 @@
             text-overflow: ellipsis;
             max-width: 300px;
         }
-        
+
         .now-playing-artist {
             font-size: 14px;
             color: #aaa;
         }
-        
+
         .progress-container {
             display: flex;
             align-items: center;
             width: 100%;
             margin-bottom: 20px;
         }
-        
+
         .progress-time {
             font-size: 14px;
             color: #aaa;
             margin: 0 10px;
         }
-        
+
         .progress-bar {
             flex-grow: 1;
             height: 5px;
@@ -327,7 +329,7 @@
             border-radius: 5px;
             position: relative;
         }
-        
+
         .progress-bar input[type="range"] {
             width: 100%;
             height: 5px;
@@ -338,7 +340,7 @@
             left: 0;
             cursor: pointer;
         }
-        
+
         .progress-bar input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 12px;
@@ -347,19 +349,19 @@
             border-radius: 50%;
             cursor: pointer;
         }
-        
+
         .progress-bar input[type="range"]::-webkit-slider-runnable-track {
             background: linear-gradient(to right, #fff 0%, #fff var(--progress), #555 var(--progress), #555 100%);
             height: 5px;
             border-radius: 5px;
         }
-        
+
         .player-controls {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        
+
         .control-btn {
             background: none;
             border: none;
@@ -368,25 +370,25 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .control-btn:hover {
             color: var(--primary-color);
         }
-        
+
         .control-btn.play-pause {
             font-size: 36px;
         }
-        
+
         .control-btn svg {
             width: 24px;
             height: 24px;
         }
-        
+
         .control-btn.play-pause svg {
             width: 36px;
             height: 36px;
         }
-        
+
         .visualizer {
             display: flex;
             justify-content: center;
@@ -395,21 +397,21 @@
             gap: 3px;
             margin-top: 15px;
         }
-        
+
         .visualizer-bar {
             width: 8px;
             background-color: var(--primary-color);
             border-radius: 3px 3px 0 0;
             transition: height 0.1s ease;
         }
-        
+
         .commands-container {
             background-color: #333;
             border-radius: 8px;
             padding: 15px;
             margin-top: 20px;
         }
-        
+
         .command-item {
             background-color: #444;
             border-radius: 8px;
@@ -418,13 +420,13 @@
             display: flex;
             align-items: center;
         }
-        
+
         .command-keyword {
             font-weight: 600;
             color: var(--primary-color);
             margin-right: 10px;
         }
-        
+
         .upload-container {
             border: 2px dashed #555;
             border-radius: 8px;
@@ -433,27 +435,27 @@
             margin-bottom: 20px;
             transition: all 0.3s;
         }
-        
+
         .upload-container:hover {
             border-color: var(--primary-color);
             background-color: rgba(255, 204, 0, 0.05);
         }
-        
+
         .file-input {
             display: none;
         }
-        
+
         .upload-icon {
             font-size: 40px;
             color: var(--primary-color);
             margin-bottom: 10px;
         }
-        
+
         .upload-text {
             color: #aaa;
             margin-bottom: 15px;
         }
-        
+
         .upload-btn {
             background-color: var(--primary-color);
             color: var(--dark-color);
@@ -463,12 +465,12 @@
             font-weight: 600;
             transition: all 0.3s;
         }
-        
+
         .upload-btn:hover {
             background-color: #ffd633;
             transform: translateY(-2px);
         }
-        
+
         .player-backdrop {
             position: absolute;
             top: 0;
@@ -481,11 +483,11 @@
             pointer-events: none;
             z-index: 0;
         }
-        
+
         .player-backdrop.active {
             opacity: 1;
         }
-        
+
         .empty-playlist {
             display: flex;
             flex-direction: column;
@@ -494,20 +496,20 @@
             padding: 40px 20px;
             color: #777;
         }
-        
+
         .empty-playlist-icon {
             font-size: 50px;
             margin-bottom: 20px;
             color: #555;
         }
-        
+
         .audio-indicator {
             display: flex;
             align-items: center;
             gap: 5px;
             margin-left: 10px;
         }
-        
+
         .audio-bar {
             width: 3px;
             background-color: var(--accent-color);
@@ -515,45 +517,304 @@
             height: 15px;
             animation: audio-wave 0.8s infinite ease-in-out;
         }
-        
+
         .audio-bar:nth-child(2) {
             animation-delay: 0.1s;
             height: 20px;
         }
-        
+
         .audio-bar:nth-child(3) {
             animation-delay: 0.2s;
             height: 25px;
         }
-        
+
         .audio-bar:nth-child(4) {
             animation-delay: 0.3s;
             height: 20px;
         }
-        
+
         .audio-bar:nth-child(5) {
             animation-delay: 0.4s;
             height: 15px;
         }
-        
+
         @keyframes audio-wave {
             0% { transform: scaleY(0.5); }
             50% { transform: scaleY(1); }
             100% { transform: scaleY(0.5); }
         }
-        
+
         .command-indicator {
             display: none;
             animation: fade-in 0.3s;
         }
-        
+
         .command-indicator.show {
             display: block;
         }
-        
+
         @keyframes fade-in {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        /* Responsive dizayn uchun media querylar */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .logo {
+                font-size: 20px;
+                margin-right: 0;
+            }
+
+            .clock {
+                margin-left: 0;
+                font-size: 16px;
+                padding: 5px 10px;
+            }
+
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .status {
+                min-width: auto;
+                flex-grow: 1;
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .mic-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .card-header {
+                font-size: 16px;
+                padding: 10px 15px;
+            }
+
+            .playlist-container {
+                max-height: 300px;
+            }
+
+            .song-item {
+                padding: 8px 10px;
+            }
+
+            .song-number {
+                width: 25px;
+                font-size: 14px;
+            }
+
+            .song-title {
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .action-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            .player-container {
+                padding: 15px;
+            }
+
+            .player-title {
+                font-size: 16px;
+            }
+
+            .media-player-wrapper {
+                margin-bottom: 10px;
+            }
+
+            #media-player,
+            #audio-player {
+                height: auto;
+            }
+
+            .now-playing {
+                padding: 15px;
+            }
+
+            .album-art {
+                width: 120px;
+                height: 120px;
+            }
+
+            .album-art svg {
+                width: 60px;
+                height: 60px;
+            }
+
+            .now-playing-title {
+                font-size: 16px;
+                max-width: 200px;
+            }
+
+            .now-playing-artist {
+                font-size: 12px;
+            }
+
+            .progress-time {
+                font-size: 12px;
+            }
+
+            .player-controls {
+                gap: 15px;
+            }
+
+            .control-btn {
+                font-size: 20px;
+            }
+
+            .control-btn.play-pause {
+                font-size: 30px;
+            }
+
+            .visualizer {
+                height: 40px;
+                gap: 2px;
+            }
+
+            .visualizer-bar {
+                width: 6px;
+            }
+
+            .upload-container {
+                padding: 15px;
+            }
+
+            .upload-icon {
+                font-size: 30px;
+            }
+
+            .upload-text {
+                font-size: 14px;
+            }
+
+            .upload-btn {
+                padding: 6px 15px;
+                font-size: 14px;
+            }
+
+            .commands-container {
+                padding: 10px;
+            }
+
+            .command-item {
+                font-size: 14px;
+                padding: 8px 10px;
+            }
+
+            .command-keyword {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 18px;
+            }
+
+            .clock {
+                font-size: 14px;
+            }
+
+            .mic-btn {
+                width: 35px;
+                height: 35px;
+            }
+
+            .status {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            .card-header {
+                font-size: 14px;
+            }
+
+            .song-title {
+                font-size: 12px;
+            }
+
+            .action-btn {
+                width: 28px;
+                height: 28px;
+            }
+
+            .player-title {
+                font-size: 14px;
+            }
+
+            .album-art {
+                width: 100px;
+                height: 100px;
+            }
+
+            .album-art svg {
+                width: 50px;
+                height: 50px;
+            }
+
+            .now-playing-title {
+                font-size: 14px;
+                max-width: 150px;
+            }
+
+            .now-playing-artist {
+                font-size: 10px;
+            }
+
+            .progress-time {
+                font-size: 10px;
+            }
+
+            .control-btn {
+                font-size: 18px;
+            }
+
+            .control-btn.play-pause {
+                font-size: 28px;
+            }
+
+            .visualizer {
+                height: 30px;
+            }
+
+            .visualizer-bar {
+                width: 5px;
+            }
+
+            .upload-text {
+                font-size: 12px;
+            }
+
+            .upload-btn {
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+
+            .command-item {
+                font-size: 12px;
+            }
+
+            .command-keyword {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -607,7 +868,7 @@
                     </div>
                     <div class="card-body p-0">
                         <div class="upload-container">
-                            <input type="file" id="file-input" class="file-input" accept="audio/*,video/*" multiple webkitdirectory>
+                            <input type="file" id="file-input" class="file-input" accept="audio/*,video/*,.mp3,.mp4,.m4a,.wav" multiple>
                             <div class="upload-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
                                     <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -646,43 +907,43 @@
                     <div class="card-body">
                         <div class="commands-container">
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza"</span>
+                                <span class="command-keyword">"Aziz"</span>
                                 <span>Mikrofon yonadi, 5 soniya buyruq kutiladi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza yon"</span>
+                                <span class="command-keyword">"Aziz yon"</span>
                                 <span>Media ijro etishni boshlaydi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza to'xta"</span>
+                                <span class="command-keyword">"Aziz to'xta"</span>
                                 <span>Media to'xtatadi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza davom et"</span>
+                                <span class="command-keyword">"Aziz davom et"</span>
                                 <span>To'xtagan joydan davom ettiradi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza keyingi"</span>
+                                <span class="command-keyword">"Aziz keyingi"</span>
                                 <span>Keyingi faylga o'tadi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza avvalgi"</span>
+                                <span class="command-keyword">"Aziz avvalgi"</span>
                                 <span>Avvalgi faylga qaytadi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza tamom"</span>
+                                <span class="command-keyword">"Aziz tamom"</span>
                                 <span>Media to'xtatib boshiga qaytaradi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza o'ch"</span>
+                                <span class="command-keyword">"Aziz o'ch"</span>
                                 <span>Mikrofonni o'chiradi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza pasaytir"</span>
+                                <span class="command-keyword">"Aziz pasaytir"</span>
                                 <span>Ovozni 10% pasaytiradi</span>
                             </div>
                             <div class="command-item">
-                                <span class="command-keyword">"Aziza ko'tar"</span>
+                                <span class="command-keyword">"Aziz ko'tar"</span>
                                 <span>Ovozni 10% ko'taradi</span>
                             </div>
                         </div>
@@ -706,8 +967,8 @@
                     
                     <div class="player-visual">
                         <div class="media-player-wrapper">
-                            <video id="media-player" controls style="display: none;"></video>
-                            <audio id="audio-player" controls style="display: none;"></audio>
+                            <video id="media-player" controls playsinline style="display: none;"></video>
+                            <audio id="audio-player" controls playsinline style="display: none;"></audio>
                         </div>
                         
                         <div id="visualizer" class="visualizer">
@@ -873,14 +1134,12 @@
                     const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
                     statusDiv.textContent = `Eshitildi: ${transcript}`;
 
-                    // "Aziza" so‘zini qidirish
-                    if (transcript.includes('aziza') && !isWaiting) {
+                    if (transcript.includes('aziz') && !isWaiting) {
                         isWaiting = true;
-                        statusDiv.textContent = `"Aziza" aniqlandi: Нима буйурасиз?`;
+                        statusDiv.textContent = `"Aziz" aniqlandi: Нима буйурасиз?`;
                         statusDiv.classList.add('success');
                         setTimeout(() => statusDiv.classList.remove('success'), 2000);
 
-                        // Media 15 soniyaga to‘xtaydi
                         if (currentPlayer && !currentPlayer.paused) {
                             currentPlayer.pause();
                             playBtn.innerHTML = `
@@ -891,13 +1150,12 @@
                             stopVisualizer();
                         }
 
-                        // 15 soniyadan sanash
                         let countdown = 15;
-                        statusDiv.textContent = `Aziza ${countdown}`;
+                        statusDiv.textContent = `Aziz ${countdown}`;
                         clearInterval(countdownInterval);
                         countdownInterval = setInterval(() => {
                             countdown--;
-                            statusDiv.textContent = `Aziza ${countdown}`;
+                            statusDiv.textContent = `Aziz ${countdown}`;
                             if (countdown <= 0) {
                                 clearInterval(countdownInterval);
                                 isWaiting = false;
@@ -913,14 +1171,11 @@
                             }
                         }, 1000);
 
-                        // 15 soniya kutish
                         setTimeout(() => {
                             clearInterval(countdownInterval);
                             isWaiting = false;
                         }, 15000);
-                    } 
-                    // 15 soniya ichida buyruq kelsa
-                    else if (isWaiting) {
+                    } else if (isWaiting) {
                         const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
                         let foundCommand = null;
 
@@ -1136,6 +1391,31 @@
             currentPlayer.currentTime = newTime;
         });
 
+        // Progress bar uchun sensorli boshqaruv
+        progress.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            updateProgressFromTouch(e);
+        });
+
+        progress.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            updateProgressFromTouch(e);
+        });
+
+        function updateProgressFromTouch(e) {
+            const rect = progress.getBoundingClientRect();
+            const touchX = e.touches[0].clientX - rect.left;
+            const width = rect.width;
+            const progressPercent = Math.min(1, Math.max(0, touchX / width)) * 100;
+            progress.value = progressPercent;
+            progress.style.setProperty('--progress', `${progressPercent}%`);
+            if (currentPlayer) {
+                const dur = currentPlayer.duration || 0;
+                const newTime = (progressPercent / 100) * dur;
+                currentPlayer.currentTime = newTime;
+            }
+        }
+
         // Real audio vizualizatori
         function setupVisualizer() {
             if (!currentPlayer || currentPlayer === mediaPlayer) return;
@@ -1152,13 +1432,13 @@
 
             function animateVisualizer() {
                 if (currentPlayer.paused) {
-                    visualizerBars.forEach(bar => bar.style.height = '10px');
+                    visualizerBars.forEach(bar => bar.style.height = '5px');
                     return;
                 }
 
                 analyser.getByteFrequencyData(dataArray);
                 visualizerBars.forEach((bar, i) => {
-                    const height = (dataArray[i] / 255) * 60;
+                    const height = (dataArray[i] / 255) * 40;
                     bar.style.height = `${height}px`;
                 });
 
@@ -1171,7 +1451,7 @@
         // Vizualizatorni to'xtatish
         function stopVisualizer() {
             if (audioContext) {
-                visualizerBars.forEach(bar => bar.style.height = '10px');
+                visualizerBars.forEach(bar => bar.style.height = '5px');
                 playerBackdrop.classList.remove('active');
             }
         }
@@ -1296,6 +1576,20 @@
             }
         });
 
+        // Sensorli qurilmalar uchun tugma hodisalari
+        const controlButtons = document.querySelectorAll('.control-btn');
+        controlButtons.forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                btn.classList.add('active');
+            });
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                btn.classList.remove('active');
+                btn.click();
+            });
+        });
+
         // Oldinga va orqaga tugmalari
         nextBtn.addEventListener('click', () => {
             if (songs.length > 0) {
@@ -1330,9 +1624,181 @@
             }
         });
 
-        // Media player pauza holatida vizualizatorni to'xtatish
-        mediaPlayer.addEventListener('pause', stopVisualizer);
-        audioPlayer.addEventListener('pause', stopVisualizer);
-    </script> 
+        // Media player
+	        // Media player hajmini dinamik ravishda yangilash
+        mediaPlayer.addEventListener('loadedmetadata', () => {
+            updateDuration();
+        });
+
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            updateDuration();
+        });
+
+        // Mobil qurilmalar uchun ovozni boshqarish tugmalari
+        const volumeUpBtn = document.createElement('button');
+        volumeUpBtn.classList.add('control-btn');
+        volumeUpBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8a7.476 7.476 0 0 1-2.489 5.304l-.708-.707z"/>
+                <path d="M9.525 11.616a6.475 6.475 0 0 0 1.834-4.616 6.475 6.475 0 0 0-1.834-4.616l-.707.707A5.475 5.475 0 0 1 10.025 7a5.475 5.475 0 0 1-1.482 3.91l-.707-.707z"/>
+                <path d="M7.514 9.222A4.475 4.475 0 0 0 8.025 7a4.475 4.475 0 0 0-.511-2.222l-.707.707A3.475 3.475 0 0 1 7.025 7a3.475 3.475 0 0 1-.511 1.515l-.707-.707z"/>
+                <path d="M6 3.5v9l-3-1.5v-6l3-1.5z"/>
+            </svg>
+        `;
+        volumeUpBtn.addEventListener('click', () => {
+            if (currentPlayer) {
+                let volume = currentPlayer.volume;
+                volume = Math.min(1, volume + 0.1);
+                currentPlayer.volume = volume;
+                statusDiv.textContent = `Ovoz ${Math.round(volume * 100)}% ga ko'tarildi`;
+            }
+        });
+
+        const volumeDownBtn = document.createElement('button');
+        volumeDownBtn.classList.add('control-btn');
+        volumeDownBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M9.525 11.616a6.475 6.475 0 0 0 1.834-4.616 6.475 6.475 0 0 0-1.834-4.616l-.707.707A5.475 5.475 0 0 1 10.025 7a5.475 5.475 0 0 1-1.482 3.91l-.707-.707z"/>
+                <path d="M6 3.5v9l-3-1.5v-6l3-1.5z"/>
+            </svg>
+        `;
+        volumeDownBtn.addEventListener('click', () => {
+            if (currentPlayer) {
+                let volume = currentPlayer.volume;
+                volume = Math.max(0, volume - 0.1);
+                currentPlayer.volume = volume;
+                statusDiv.textContent = `Ovoz ${Math.round(volume * 100)}% ga pasaytirildi`;
+            }
+        });
+
+        // Ovoz tugmalarini player-controls ichiga qo'shish
+        const playerControls = document.querySelector('.player-controls');
+        playerControls.appendChild(volumeDownBtn);
+        playerControls.appendChild(volumeUpBtn);
+
+        // Sensorli qurilmalar uchun qo'shimcha funksiyalar
+        function setupTouchGestures() {
+            let startX = 0;
+            let startY = 0;
+
+            playerControls.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
+
+            playerControls.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = endX - startX;
+                const diffY = endY - startY;
+
+                // Horizontal swipe (keyingi yoki avvalgi)
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // O'ngga swipe - avvalgi
+                        if (songs.length > 0) {
+                            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                            playSong(currentSongIndex);
+                        }
+                    } else {
+                        // Chapga swipe - keyingi
+                        if (songs.length > 0) {
+                            currentSongIndex = (currentSongIndex + 1) % songs.length;
+                            playSong(currentSongIndex);
+                        }
+                    }
+                }
+
+                // Vertikal swipe (ovozni ko'tarish yoki pasaytirish)
+                if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 50) {
+                    if (diffY > 0) {
+                        // Pastga swipe - ovoz pasaytirish
+                        if (currentPlayer) {
+                            let volume = currentPlayer.volume;
+                            volume = Math.max(0, volume - 0.1);
+                            currentPlayer.volume = volume;
+                            statusDiv.textContent = `Ovoz ${Math.round(volume * 100)}% ga pasaytirildi`;
+                        }
+                    } else {
+                        // Tepaga swipe - ovoz ko'tarish
+                        if (currentPlayer) {
+                            let volume = currentPlayer.volume;
+                            volume = Math.min(1, volume + 0.1);
+                            currentPlayer.volume = volume;
+                            statusDiv.textContent = `Ovoz ${Math.round(volume * 100)}% ga ko'tarildi`;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Sensorli jestlarni ishga tushirish
+        setupTouchGestures();
+
+        // Ekran orientatsiyasini qayta sozlash (mobil qurilmalar uchun)
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                const playerContainer = document.querySelector('.player-container');
+                playerContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        });
+
+        // Klaviatura qisqartmalari (desktop uchun qo‘shimcha funksiya)
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                playBtn.click();
+            } else if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                nextBtn.click();
+            } else if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                prevBtn.click();
+            } else if (e.code === 'ArrowUp') {
+                e.preventDefault();
+                volumeUpBtn.click();
+            } else if (e.code === 'ArrowDown') {
+                e.preventDefault();
+                volumeDownBtn.click();
+            }
+        });
+
+        // Lazy loading va performansi yaxshilash uchun
+        function optimizePerformance() {
+            // Agar media player ekranda bo‘lmasa, vizualizatorni o‘chirish
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting && currentPlayer && !currentPlayer.paused) {
+                        stopVisualizer();
+                    } else if (entry.isIntersecting && currentPlayer && !currentPlayer.paused) {
+                        setupVisualizer();
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            observer.observe(document.querySelector('.player-container'));
+        }
+
+        optimizePerformance();
+
+        // Xatolarni ushlab olish va foydalanuvchiga ko‘rsatish
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            statusDiv.textContent = `Xato yuz berdi: ${msg}`;
+            statusDiv.classList.add('error');
+            setTimeout(() => statusDiv.classList.remove('error'), 5000);
+            return false;
+        };
+
+        // Dastlabki holatni sozlash
+        function initializeApp() {
+            if (songs.length === 0) {
+                nowPlayingTitle.textContent = "Hozir ijro etilmoqda...";
+                nowPlayingArtist.textContent = "Noma'lum";
+            }
+            renderPlaylist();
+        }
+
+        initializeApp();
+    </script>
 </body>
 </html>
