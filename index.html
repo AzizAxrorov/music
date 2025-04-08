@@ -1,1 +1,1338 @@
-
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ovozli Qo'shiq va Video Boshqaruvi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Oldingi stillar o'zgarishsiz qoldirildi */
+        :root {
+            --primary-color: #ffcc00;
+            --dark-color: #222222;
+            --light-color: #f5f5f5;
+            --accent-color: #fc3f1d;
+        }
+        
+        body {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo svg {
+            margin-right: 10px;
+        }
+        
+        .clock {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--primary-color);
+            background-color: #333;
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin-left: auto;
+        }
+        
+        .card {
+            background-color: #333;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: #444;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 15px 20px;
+            border-bottom: 1px solid #555;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .mic-btn {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3);
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .mic-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(255, 204, 0, 0.4);
+        }
+        
+        .mic-btn.listening {
+            background-color: var(--accent-color);
+            animation: pulse-red 1.5s infinite;
+        }
+        
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(252, 63, 29, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(252, 63, 29, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(252, 63, 29, 0); }
+        }
+        
+        .status {
+            background-color: #444;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-left: 10px;
+            min-width: 200px;
+            transition: all 0.3s;
+        }
+        
+        .status.success {
+            background-color: rgba(40, 167, 69, 0.3);
+        }
+        
+        .status.error {
+            background-color: rgba(220, 53, 69, 0.3);
+        }
+        
+        .playlist-container {
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+        
+        .playlist-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .playlist-container::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+        
+        .playlist-container::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px;
+        }
+        
+        .playlist-container::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+        
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #3a3a3a;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .song-item:hover {
+            background-color: #3a3a3a;
+        }
+        
+        .song-item.active {
+            background-color: rgba(255, 204, 0, 0.15);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .song-number {
+            width: 30px;
+            color: #888;
+            font-weight: 600;
+        }
+        
+        .song-info {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        
+        .song-title {
+            font-weight: 500;
+            color: var(--light-color);
+        }
+        
+        .song-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #444;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-color);
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: #555;
+            transform: scale(1.1);
+        }
+        
+        .action-btn.primary {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+        }
+        
+        .action-btn.primary:hover {
+            background-color: #ffd633;
+        }
+        
+        .player-container {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .player-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .player-visual {
+            position: relative;
+        }
+        
+        .media-player-wrapper {
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #222;
+            margin-bottom: 15px;
+            position: relative;
+            display: block; /* Video va audio ko'rsatish uchun */
+        }
+        
+        #media-player {
+            width: 100%;
+            border-radius: 8px;
+            background-color: #222;
+        }
+        
+        .now-playing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .album-art {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            background-color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .album-art svg {
+            width: 80px;
+            height: 80px;
+            color: #888;
+        }
+        
+        .now-playing-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .now-playing-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+        
+        .now-playing-artist {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .progress-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .progress-time {
+            font-size: 14px;
+            color: #aaa;
+            margin: 0 10px;
+        }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 5px;
+            background-color: #555;
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        .progress-bar input[type="range"] {
+            width: 100%;
+            height: 5px;
+            -webkit-appearance: none;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+        
+        .progress-bar input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .progress-bar input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(to right, #fff 0%, #fff var(--progress), #555 var(--progress), #555 100%);
+            height: 5px;
+            border-radius: 5px;
+        }
+        
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        .control-btn.play-pause {
+            font-size: 36px;
+        }
+        
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .control-btn.play-pause svg {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 60px;
+            gap: 3px;
+            margin-top: 15px;
+        }
+        
+        .visualizer-bar {
+            width: 8px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+            transition: height 0.1s ease;
+        }
+        
+        .commands-container {
+            background-color: #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .command-item {
+            background-color: #444;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .command-keyword {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        .upload-container {
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .upload-container:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(255, 204, 0, 0.05);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        
+        .upload-btn {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background-color: #ffd633;
+            transform: translateY(-2px);
+        }
+        
+        .player-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(252,63,29,0.05));
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .player-backdrop.active {
+            opacity: 1;
+        }
+        
+        .empty-playlist {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        
+        .empty-playlist-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .audio-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .audio-bar {
+            width: 3px;
+            background-color: var(--accent-color);
+            border-radius: 1px;
+            height: 15px;
+            animation: audio-wave 0.8s infinite ease-in-out;
+        }
+        
+        .audio-bar:nth-child(2) {
+            animation-delay: 0.1s;
+            height: 20px;
+        }
+        
+        .audio-bar:nth-child(3) {
+            animation-delay: 0.2s;
+            height: 25px;
+        }
+        
+        .audio-bar:nth-child(4) {
+            animation-delay: 0.3s;
+            height: 20px;
+        }
+        
+        .audio-bar:nth-child(5) {
+            animation-delay: 0.4s;
+            height: 15px;
+        }
+        
+        @keyframes audio-wave {
+            0% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+            100% { transform: scaleY(0.5); }
+        }
+        
+        .command-indicator {
+            display: none;
+            animation: fade-in 0.3s;
+        }
+        
+        .command-indicator.show {
+            display: block;
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z"/>
+                    <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z"/>
+                    <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z"/>
+                </svg>
+                Ovozli Musiqa va Video
+            </div>
+            <div class="controls">
+                <button id="start-btn" class="mic-btn" title="Ovoz tinglovchini yoqish/o'chirish">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z"/>
+                    </svg>
+                </button>
+                <div id="status" class="status">
+                    Buyruq kutilmoqda...
+                </div>
+                <div id="command-indicator" class="command-indicator">
+                    <div class="audio-indicator">
+                        <div class="audio-bar"></div>
+                        <div class="audio-bar"></div>
+                        <div class="audio-bar"></div>
+                        <div class="audio-bar"></div>
+                        <div class="audio-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="clock" class="clock">
+                00:00:00
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-music-note-list me-2" viewBox="0 0 16 16">
+                            <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2z"/>
+                            <path fill-rule="evenodd" d="M12 3v10h-1V3h1z"/>
+                            <path d="M11 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 16 2.22V4l-5 1V2.82z"/>
+                            <path fill-rule="evenodd" d="M0 11.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 .5 7H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 .5 3H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5z"/>
+                        </svg>
+                        Playlist
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="upload-container">
+                            <input type="file" id="file-input" class="file-input" accept="audio/*,video/*" multiple webkitdirectory>
+                            <div class="upload-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                                </svg>
+                            </div>
+                            <p class="upload-text">MP3 yoki MP4 fayllarni yuklash uchun bosing yoki sudrab tashlang</p>
+                            <label for="file-input" class="upload-btn">Fayllarni yuklash</label>
+                        </div>
+                        
+                        <div class="playlist-container">
+                            <div id="playlist" class="playlist">
+                                <div class="empty-playlist">
+                                    <div class="empty-playlist-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/>
+                                            <path fill-rule="evenodd" d="M9 3v10H8V3h1z"/>
+                                            <path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/>
+                                        </svg>
+                                    </div>
+                                    <p>Hozircha fayllar yo'q</p>
+                                    <p>Fayllarni yuklash uchun yuqoridagi tugmani bosing</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list-check me-2" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                        Azizning Buyruqlari
+                    </div>
+                    <div class="card-body">
+                        <div class="commands-container">
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz"</span>
+                                <span>Mikrofon yonadi, 5 soniya buyruq kutiladi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz yon"</span>
+                                <span>Media ijro etishni boshlaydi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz to'xta"</span>
+                                <span>Media to'xtatadi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz davom et"</span>
+                                <span>To'xtagan joydan davom ettiradi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz keyingi"</span>
+                                <span>Keyingi faylga o'tadi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz avvalgi"</span>
+                                <span>Avvalgi faylga qaytadi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz tamom"</span>
+                                <span>Media to'xtatib boshiga qaytaradi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz o'ch"</span>
+                                <span>Mikrofonni o'chiradi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz pasaytir"</span>
+                                <span>Ovozni 10% pasaytiradi</span>
+                            </div>
+                            <div class="command-item">
+                                <span class="command-keyword">"Aziz ko'tar"</span>
+                                <span>Ovozni 10% ko'taradi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="player-container">
+                    <div class="player-backdrop" id="player-backdrop"></div>
+                    <div class="player-header">
+                        <div class="player-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-music-player me-2" viewBox="0 0 16 16">
+                                <path d="M4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3zm1 0v3h6V3H5zm3 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                <path d="M11 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm-3 2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/>
+                            </svg>
+                            Player
+                        </div>
+                    </div>
+                    
+                    <div class="player-visual">
+                        <div class="media-player-wrapper">
+                            <video id="media-player" controls style="display: none;"></video>
+                            <audio id="audio-player" controls style="display: none;"></audio>
+                        </div>
+                        
+                        <div id="visualizer" class="visualizer">
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                            <div class="visualizer-bar"></div>
+                        </div>
+                        
+                        <div id="now-playing" class="now-playing">
+                            <div class="album-art">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/>
+                                    <path fill-rule="evenodd" d="M9 3v10H8V3h1z"/>
+                                    <path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/>
+                                </svg>
+                            </div>
+                            <div class="now-playing-info">
+                                <div class="now-playing-title">Hozir ijro etilmoqda...</div>
+                                <div class="now-playing-artist">Noma'lum</div>
+                            </div>
+                            <div class="progress-container">
+                                <span class="progress-time" id="current-time">0:00</span>
+                                <div class="progress-bar">
+                                    <input type="range" id="progress" min="0" max="100" value="0" style="--progress: 0%;">
+                                </div>
+                                <span class="progress-time" id="duration">0:00</span>
+                            </div>
+                            <div class="player-controls">
+                                <button class="control-btn shuffle-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v-1h-.5a.5.5 0 0 1 0-1H13c1.104 0 2 .896 2 2v1h1a.5.5 0 0 1 .354.854l-2 2a.5.5 0 0 1-.708 0l-2-2A.5.5 0 0 1 11 5v1h-1c-1.202 0-2.827 1.24-3.874 2.418-.49.552-.865 1.102-1.126 1.532-.26-.43-.636-.98-1.126-1.532C3.827 7.24 2.202 6 0 6v1h-.5a.5.5 0 0 1-.5-.5zm.646 9.354A.5.5 0 0 1 1 13h1c2.202 0 3.827-1.24 4.874-2.418.49-.552.865-1.102 1.126-1.532-.26.43-.636.98-1.126 1.532C5.827 11.76 4.202 13 2 13v1h-.5a.5.5 0 0 1-.354-.854l2-2a.5.5 0 0 1 .708 0l2 2z"/>
+                                    </svg>
+                                </button>
+                                <button class="control-btn prev-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8a7.476 7.476 0 0 1-2.489 5.304l-.708-.707z"/>
+                                        <path d="M9.525 11.616a6.475 6.475 0 0 0 1.834-4.616 6.475 6.475 0 0 0-1.834-4.616l-.707.707A5.475 5.475 0 0 1 10.025 7a5.475 5.475 0 0 1-1.482 3.91l-.707-.707z"/>
+                                        <path d="M7.514 9.222A4.475 4.475 0 0 0 8.025 7a4.475 4.475 0 0 0-.511-2.222l-.707.707A3.475 3.475 0 0 1 7.025 7a3.475 3.475 0 0 1-.511 1.515l-.707-.707z"/>
+                                        <path d="M5.5 7a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1zm0 1a.5.5 0 0 1-.5.5.5.5 0 0 1-.5-.5.5.5 0 0 1 .5-.5.5.5 0 0 1 .5.5z"/>
+                                    </svg>
+                                </button>
+                                <button class="control-btn play-pause play-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M3 4v8l7-4-7-4z"/>
+                                    </svg>
+                                </button>
+                                <button class="control-btn next-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M4.464 1.99A8.473 8.473 0 0 1 6.954 8a8.473 8.473 0 0 1-2.49 6.01l.708-.707A7.476 7.476 0 0 0 2.975 8a7.476 7.476 0 0 0 2.489-5.304l.708.707z"/>
+                                        <path d="M6.475 4.384A6.475 6.475 0 0 1 4.641 9a6.475 6.475 0 0 1 1.834 4.616l.707-.707A5.475 5.475 0 0 0 5.975 9a5.475 5.475 0 0 0 1.482-3.91l.707.707z"/>
+                                        <path d="M8.486 6.778A4.475 4.475 0 0 1 7.975 9a4.475 4.475 0 0 1 .511 2.222l.707-.707A3.475 3.475 0 0 0 8.975 9a3.475 3.475 0 0 0 .511-1.515l.707.707z"/>
+                                        <path d="M10.5 9a1 1 0 0 0 1-1 1 1 0 0 0-1-1 1 1 0 0 0-1 1 1 1 0 0 0 1 1zm0-1a.5.5 0 0 1 .5-.5.5.5 0 0 1 .5.5.5.5 0 0 1-.5.5.5.5 0 0 1-.5-.5z"/>
+                                    </svg>
+                                </button>
+                                <button class="control-btn repeat-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M11 2.5a.5.5 0 0 1 .5.5v1h1a.5.5 0 0 1 0 1H11v1a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5zM5 3a.5.5 0 0 0-.5.5v1H3a.5.5 0 0 0 0 1h1.5v1a.5.5 0 0 0 1 0V3.5A.5.5 0 0 0 5 3z"/>
+                                        <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h9A1.5 1.5 0 0 1 14 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-9zm1.5-.5a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-9z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Elementlarni tanlash
+        const startBtn = document.getElementById('start-btn');
+        const statusDiv = document.getElementById('status');
+        const commandIndicator = document.getElementById('command-indicator');
+        const fileInput = document.getElementById('file-input');
+        const playlist = document.getElementById('playlist');
+        const mediaPlayer = document.getElementById('media-player');
+        const audioPlayer = document.getElementById('audio-player');
+        const nowPlayingTitle = document.querySelector('.now-playing-title');
+        const nowPlayingArtist = document.querySelector('.now-playing-artist');
+        const currentTime = document.getElementById('current-time');
+        const duration = document.getElementById('duration');
+        const progress = document.getElementById('progress');
+        const visualizerBars = document.querySelectorAll('.visualizer-bar');
+        const playerBackdrop = document.getElementById('player-backdrop');
+        const clock = document.getElementById('clock');
+        const playBtn = document.querySelector('.play-btn');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+    
+        let songs = [];
+        let currentSongIndex = -1;
+        let isListening = false;
+        let recognition;
+        let audioContext, analyser, dataArray;
+        let currentPlayer = null;
+        let countdownInterval;
+        let isWaiting = false;
+    
+        // Brauzer yangilanmasligi uchun
+        window.onbeforeunload = function() {
+            return "Saytni yopmoqchimisiz? Oynatilayotgan media to'xtatiladi.";
+        };
+    
+        // Real vaqt rejimida soatni yangilash
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            clock.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    
+        // Mikrofonni sozlash va doimiy tinglash
+        async function setupMicrophone() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    }
+                });
+    
+                const audioContextMic = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContextMic.createMediaStreamSource(stream);
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'uz-UZ';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+    
+                recognition.onstart = () => {
+                    isListening = true;
+                    startBtn.classList.add('listening');
+                    commandIndicator.classList.add('show');
+                    statusDiv.textContent = "Tinglanmoqda...";
+                };
+    
+                recognition.onend = () => {
+                    isListening = false;
+                    startBtn.classList.remove('listening');
+                    commandIndicator.classList.remove('show');
+                    statusDiv.textContent = "Buyruq kutilmoqda...";
+                    if (!isListening) recognition.start();
+                };
+    
+                recognition.onresult = (event) => {
+                    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+                    statusDiv.textContent = `Eshitildi: ${transcript}`;
+    
+                    // "Aziza" so‘zini qidirish
+                    if (transcript.includes('aziza') && !isWaiting) {
+                        isWaiting = true;
+                        statusDiv.textContent = `"Aziza" aniqlandi: Нима буйурасиз?`;
+                        statusDiv.classList.add('success');
+                        setTimeout(() => statusDiv.classList.remove('success'), 2000);
+    
+                        // Media 15 soniyaga to‘xtaydi
+                        if (currentPlayer && !currentPlayer.paused) {
+                            currentPlayer.pause();
+                            playBtn.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M3 4v8l7-4-7-4z"/>
+                                </svg>
+                            `;
+                            stopVisualizer();
+                        }
+    
+                        // 15 soniyadan sanash
+                        let countdown = 15;
+                        statusDiv.textContent = `Aziza ${countdown}`;
+                        clearInterval(countdownInterval);
+                        countdownInterval = setInterval(() => {
+                            countdown--;
+                            statusDiv.textContent = `Aziza ${countdown}`;
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                isWaiting = false;
+                                if (currentPlayer && currentPlayer.paused) {
+                                    currentPlayer.play();
+                                    playBtn.innerHTML = `
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
+                                        </svg>
+                                    `;
+                                    setupVisualizer();
+                                }
+                            }
+                        }, 1000);
+    
+                        // 15 soniya kutish
+                        setTimeout(() => {
+                            clearInterval(countdownInterval);
+                            isWaiting = false;
+                        }, 15000);
+                    } 
+                    // 15 soniya ichida buyruq kelsa
+                    else if (isWaiting) {
+                        const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
+                        let foundCommand = null;
+    
+                        for (const cmd of validCommands) {
+                            if (transcript.includes(cmd)) {
+                                foundCommand = cmd;
+                                break;
+                            }
+                        }
+    
+                        if (foundCommand) {
+                            clearInterval(countdownInterval);
+                            isWaiting = false;
+                            processCommand(transcript);
+                        }
+                    }
+                };
+    
+                recognition.onerror = (event) => {
+                    if (event.error !== 'no-speech') {
+                        statusDiv.textContent = "Xato: Ovoz aniqlanmadi";
+                        statusDiv.classList.add('error');
+                        setTimeout(() => statusDiv.classList.remove('error'), 2000);
+                    }
+                    if (isListening) recognition.start();
+                };
+    
+                recognition.start();
+            } catch (err) {
+                console.error("Mikrofon sozlamasida xato:", err);
+                statusDiv.textContent = "Mikrofon ishga tushmadi";
+            }
+        }
+    
+        // Mikrofonni dastlabki ishga tushirish
+        setupMicrophone();
+    
+        // Mikrofon tugmasi bilan tinglashni boshqarish
+        startBtn.addEventListener('click', () => {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    
+        // Fayl yuklash
+        fileInput.addEventListener('change', (event) => {
+            const files = Array.from(event.target.files);
+            files.forEach((file, index) => {
+                const song = {
+                    name: file.name.replace(/\.[^/.]+$/, ""),
+                    url: URL.createObjectURL(file),
+                    file: file,
+                    type: file.type.startsWith('video') ? 'video' : 'audio'
+                };
+                songs.push(song);
+                addSongToPlaylist(song, songs.length - 1);
+            });
+    
+            if (songs.length > 0 && currentSongIndex === -1) {
+                currentSongIndex = 0;
+                playSong(currentSongIndex);
+            }
+        });
+    
+        // Pleylistga qo'shiq qo'shish
+        function addSongToPlaylist(song, index) {
+            const playlistEmpty = document.querySelector('.empty-playlist');
+            if (playlistEmpty) playlistEmpty.remove();
+    
+            const songItem = document.createElement('div');
+            songItem.classList.add('song-item');
+            songItem.setAttribute('data-index', index);
+            songItem.innerHTML = `
+                <div class="song-number">${index + 1}</div>
+                <div class="song-info">
+                    <div class="song-title">${song.name} (${song.type})</div>
+                </div>
+                <div class="song-actions">
+                    <button class="action-btn primary play-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M3 4v8l7-4-7-4z"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn remove-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+    
+            songItem.querySelector('.play-btn').addEventListener('click', () => {
+                currentSongIndex = index;
+                playSong(currentSongIndex);
+            });
+    
+            songItem.querySelector('.remove-btn').addEventListener('click', () => {
+                songs.splice(index, 1);
+                renderPlaylist();
+                if (currentSongIndex === index) {
+                    if (currentPlayer) currentPlayer.pause();
+                    if (songs.length > 0) {
+                        currentSongIndex = Math.min(currentSongIndex, songs.length - 1);
+                        playSong(currentSongIndex);
+                    } else {
+                        currentSongIndex = -1;
+                        nowPlayingTitle.textContent = "Hozir ijro etilmoqda...";
+                        nowPlayingArtist.textContent = "Noma'lum";
+                        currentTime.textContent = "0:00";
+                        duration.textContent = "0:00";
+                        progress.value = 0;
+                        progress.style.setProperty('--progress', '0%');
+                        stopVisualizer();
+                    }
+                }
+            });
+    
+            playlist.appendChild(songItem);
+        }
+    
+        // Pleylistni qayta render qilish
+        function renderPlaylist() {
+            playlist.innerHTML = '';
+            if (songs.length === 0) {
+                playlist.innerHTML = `
+                    <div class="empty-playlist">
+                        <div class="empty-playlist-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2z"/>
+                                <path fill-rule="evenodd" d="M9 3v10H8V3h1z"/>
+                                <path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5V2.82z"/>
+                            </svg>
+                        </div>
+                        <p>Hozircha fayllar yo'q</p>
+                        <p>Fayllarni yuklash uchun yuqoridagi tugmani bosing</p>
+                    </div>
+                `;
+            } else {
+                songs.forEach((song, index) => {
+                    addSongToPlaylist(song, index);
+                });
+            }
+        }
+    
+        // Faylni ijro etish
+        function playSong(index) {
+            if (index < 0 || index >= songs.length) return;
+    
+            const song = songs[index];
+            if (currentPlayer) {
+                currentPlayer.pause();
+                currentPlayer.style.display = 'none';
+            }
+    
+            if (song.type === 'video') {
+                currentPlayer = mediaPlayer;
+                mediaPlayer.style.display = 'block';
+                audioPlayer.style.display = 'none';
+            } else {
+                currentPlayer = audioPlayer;
+                audioPlayer.style.display = 'block';
+                mediaPlayer.style.display = 'none';
+            }
+    
+            currentPlayer.src = song.url;
+            currentPlayer.play();
+            nowPlayingTitle.textContent = song.name;
+            nowPlayingArtist.textContent = song.type === 'video' ? "Video" : "Audio";
+            updateDuration();
+            updateActiveSong(index);
+            playerBackdrop.classList.add('active');
+            setupVisualizer();
+            playBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
+                </svg>
+            `;
+        }
+    
+        // Aktiv qo'shiqni yangilash
+        function updateActiveSong(index) {
+            const songItems = document.querySelectorAll('.song-item');
+            songItems.forEach(item => item.classList.remove('active'));
+            if (songItems[index]) songItems[index].classList.add('active');
+        }
+    
+        // Davomiylikni yangilash
+        function updateDuration() {
+            if (!currentPlayer) return;
+            currentPlayer.addEventListener('timeupdate', () => {
+                const current = currentPlayer.currentTime;
+                const dur = currentPlayer.duration || 0;
+                const currentMinutes = Math.floor(current / 60);
+                const currentSeconds = Math.floor(current % 60);
+                const durationMinutes = Math.floor(dur / 60);
+                const durationSeconds = Math.floor(dur % 60);
+                currentTime.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
+                duration.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+                const progressPercent = (current / dur) * 100;
+                progress.value = progressPercent;
+                progress.style.setProperty('--progress', `${progressPercent}%`);
+            });
+        }
+    
+        // Progress bar bilan vaqtni boshqarish
+        progress.addEventListener('input', () => {
+            if (!currentPlayer) return;
+            const dur = currentPlayer.duration || 0;
+            const newTime = (progress.value / 100) * dur;
+            currentPlayer.currentTime = newTime;
+        });
+    
+        // Real audio vizualizatori
+        function setupVisualizer() {
+            if (!currentPlayer || currentPlayer === mediaPlayer) return;
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 32;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+    
+                const source = audioContext.createMediaElementSource(currentPlayer);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+            }
+    
+            function animateVisualizer() {
+                if (currentPlayer.paused) {
+                    visualizerBars.forEach(bar => bar.style.height = '10px');
+                    return;
+                }
+    
+                analyser.getByteFrequencyData(dataArray);
+                visualizerBars.forEach((bar, i) => {
+                    const height = (dataArray[i] / 255) * 60;
+                    bar.style.height = `${height}px`;
+                });
+    
+                requestAnimationFrame(animateVisualizer);
+            }
+    
+            animateVisualizer();
+        }
+    
+        // Vizualizatorni to'xtatish
+        function stopVisualizer() {
+            if (audioContext) {
+                visualizerBars.forEach(bar => bar.style.height = '10px');
+                playerBackdrop.classList.remove('active');
+            }
+        }
+    
+        // Ovozli buyruqlarni qayta ishlash
+        function processCommand(transcript) {
+            const validCommands = ['yon', "to'xta", 'davom et', 'keyingi', 'avvalgi', 'tamom', "o'ch", 'pasaytir', "ko'tar"];
+            let foundCommand = null;
+    
+            for (const cmd of validCommands) {
+                if (transcript.includes(cmd)) {
+                    foundCommand = cmd;
+                    break;
+                }
+            }
+    
+            if (!foundCommand) {
+                statusDiv.textContent = "Buyruq topilmadi";
+                return;
+            }
+    
+            statusDiv.textContent = `Buyruq bajarildi: ${foundCommand}`;
+            statusDiv.classList.add('success');
+            setTimeout(() => statusDiv.classList.remove('success'), 2000);
+    
+            switch (foundCommand) {
+                case 'yon':
+                    if (songs.length > 0) {
+                        currentSongIndex = currentSongIndex === -1 ? 0 : currentSongIndex;
+                        playSong(currentSongIndex);
+                    }
+                    break;
+                case "to'xta":
+                    if (currentPlayer) {
+                        currentPlayer.pause();
+                        playBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3 4v8l7-4-7-4z"/>
+                            </svg>
+                        `;
+                        stopVisualizer();
+                    }
+                    break;
+                case 'davom et':
+                    if (currentPlayer && currentPlayer.paused && songs.length > 0) {
+                        currentPlayer.play();
+                        playBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
+                            </svg>
+                        `;
+                        setupVisualizer();
+                    }
+                    break;
+                case 'keyingi':
+                    if (songs.length > 0) {
+                        currentSongIndex = (currentSongIndex + 1) % songs.length;
+                        playSong(currentSongIndex);
+                        statusDiv.textContent = `Keyingi qo‘shiq: ${songs[currentSongIndex].name}`;
+                    }
+                    break;
+                case 'avvalgi':
+                    if (songs.length > 0) {
+                        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                        playSong(currentSongIndex);
+                        statusDiv.textContent = `Avvalgi qo‘shiq: ${songs[currentSongIndex].name}`;
+                    }
+                    break;
+                case 'tamom':
+                    if (currentPlayer) {
+                        currentPlayer.pause();
+                        currentPlayer.currentTime = 0;
+                        playBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M3 4v8l7-4-7-4z"/>
+                            </svg>
+                        `;
+                        stopVisualizer();
+                    }
+                    break;
+                case "o'ch":
+                    recognition.stop();
+                    isListening = false;
+                    break;
+                case 'pasaytir':
+                    if (currentPlayer) {
+                        let volume = currentPlayer.volume;
+                        volume = Math.max(0, volume - 0.1);
+                        currentPlayer.volume = volume;
+                        statusDiv.textContent = `Ovoz ${Math.round(volume * 100)} foizga pasaytirildi`;
+                    }
+                    break;
+                case "ko'tar":
+                    if (currentPlayer) {
+                        let volume = currentPlayer.volume;
+                        volume = Math.min(1, volume + 0.1);
+                        currentPlayer.volume = volume;
+                        statusDiv.textContent = `Ovoz ${Math.round(volume * 100)} foizga ko'tarildi`;
+                    }
+                    break;
+            }
+        }
+    
+        // Play/Pause tugmasi
+        playBtn.addEventListener('click', () => {
+            if (currentPlayer && currentPlayer.paused && songs.length > 0) {
+                currentPlayer.play();
+                playBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1zm6 0a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h1z"/>
+                    </svg>
+                `;
+                setupVisualizer();
+            } else if (currentPlayer) {
+                currentPlayer.pause();
+                playBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M3 4v8l7-4-7-4z"/>
+                    </svg>
+                `;
+                stopVisualizer();
+            }
+        });
+    
+        // Oldinga va orqaga tugmalari
+        nextBtn.addEventListener('click', () => {
+            if (songs.length > 0) {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                playSong(currentSongIndex);
+            }
+        });
+    
+        prevBtn.addEventListener('click', () => {
+            if (songs.length > 0) {
+                currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                playSong(currentSongIndex);
+            }
+        });
+    
+        // Media player tugashida keyingi faylni avtomatik ijro etish
+        mediaPlayer.addEventListener('ended', () => {
+            if (songs.length > 0) {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                playSong(currentSongIndex);
+            } else {
+                stopVisualizer();
+            }
+        });
+    
+        audioPlayer.addEventListener('ended', () => {
+            if (songs.length > 0) {
+                currentSongIndex = (currentSongIndex + 1) % songs.length;
+                playSong(currentSongIndex);
+            } else {
+                stopVisualizer();
+            }
+        });
+    
+        // Media player pauza holatida vizualizatorni to'xtatish
+        mediaPlayer.addEventListener('pause', stopVisualizer);
+        audioPlayer.addEventListener('pause', stopVisualizer);
+    </script>
+</body>
+</html>
